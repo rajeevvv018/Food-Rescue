@@ -1,0 +1,63 @@
+/* ================================================
+   FoodRescue — Responsive Overrides
+   ================================================
+   Most responsive rules are co-located with their
+   component CSS files. This file contains any
+   cross-cutting responsive utilities.
+   ================================================ */
+
+/* --- Print --- */
+@media print {
+  .navbar,
+  .sidebar,
+  .sidebar-overlay,
+  .notification-dropdown,
+  .toast-container {
+    display: none !important;
+  }
+
+  .dashboard__main {
+    margin-left: 0 !important;
+  }
+
+  body {
+    background: white;
+  }
+}
+
+/* --- Reduced motion --- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal,
+  .reveal-left,
+  .reveal-right {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* --- Focus visible for keyboard users --- */
+*:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* --- Screen reader only --- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}

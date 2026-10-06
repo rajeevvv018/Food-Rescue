@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FoodRescue — Turning Surplus Food Into Social Impact</title>
+  <meta name="description" content="FoodRescue connects surplus food providers with NGOs and volunteers to reduce food waste and help communities in need. Rescue meals, support communities.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/global.css">
+  <link rel="stylesheet" href="assets/css/navbar.css">
+  <link rel="stylesheet" href="assets/css/hero.css">
+  <link rel="stylesheet" href="assets/css/responsive.css">
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍱</text></svg>">
+</head>
+<body>
+
+  <!-- ===== Navbar ===== -->
+  <nav class="navbar navbar--transparent" id="navbar">
+    <div class="navbar__inner">
+      <a href="index.html" class="navbar__brand" id="nav-brand">
+        <span class="navbar__brand-icon">🍱</span>
+        Food<span class="navbar__brand-highlight">Rescue</span>
+      </a>
+
+      <div class="navbar__nav" id="nav-links">
+        <a href="#hero" class="navbar__link navbar__link--active">Home</a>
+        <a href="#how-it-works" class="navbar__link">How It Works</a>
+        <a href="#about" class="navbar__link">About</a>
+        <a href="#impact" class="navbar__link">Impact</a>
+        <a href="#contact" class="navbar__link">Contact</a>
+      </div>
+
+      <div class="navbar__actions" id="nav-actions">
+        <a href="login.html" class="navbar__login">Login</a>
+        <a href="register.html" class="navbar__cta">Get Started</a>
+      </div>
+
+      <button class="navbar__toggle" id="nav-toggle" aria-label="Toggle navigation menu">
+        <span class="navbar__toggle-bar"></span>
+        <span class="navbar__toggle-bar"></span>
+        <span class="navbar__toggle-bar"></span>
+      </button>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="navbar__mobile-menu" id="mobile-menu">
+      <a href="#hero" class="navbar__link">Home</a>
+      <a href="#how-it-works" class="navbar__link">How It Works</a>
+      <a href="#about" class="navbar__link">About</a>
+      <a href="#impact" class="navbar__link">Impact</a>
+      <a href="#contact" class="navbar__link">Contact</a>
+      <div class="navbar__mobile-actions">
+        <a href="login.html" class="navbar__login">Login</a>
+        <a href="register.html" class="navbar__cta">Get Started</a>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- ===== Hero Section ===== -->
+  <section class="hero" id="hero" style="background-image: url('assets/images/hero-food.jpg');">
+    <div class="hero__inner">
+      <div class="hero__content">
+        <div class="hero__label">
+          🌱 Reducing Food Waste, One Meal at a Time
+        </div>
+        <h1 class="hero__title">
+          Turning Surplus Food<br>
+          Into <span>Social Impact.</span>
+        </h1>
+        <p class="hero__subtitle">
+          Connect surplus food providers with NGOs and volunteers to reduce food waste and help communities in need.
+        </p>
+        <div class="hero__actions">
+          <a href="register.html" class="hero__btn-primary">Donate Surplus Food</a>
+          <a href="#available-food" class="hero__btn-secondary">Find Available Food</a>
+        </div>
+      </div>
+
+      <div class="hero__stats">
+        <div class="hero__stat-card">
+          <div class="hero__stat-icon">🍛</div>
+          <div>
+            <div class="hero__stat-value" data-count="1250">1,250+</div>
+            <div class="hero__stat-label">Meals Rescued</div>
+          </div>
+        </div>
+        <div class="hero__stat-card">
+          <div class="hero__stat-icon">🏪</div>
+          <div>
+            <div class="hero__stat-value" data-count="85">85+</div>
+            <div class="hero__stat-label">Food Providers</div>
+          </div>
+        </div>
+        <div class="hero__stat-card">
+          <div class="hero__stat-icon">🤝</div>
+          <div>
+            <div class="hero__stat-value" data-count="42">42+</div>
+            <div class="hero__stat-label">NGO Partners</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== Impact Statistics ===== -->
+  <section class="impact-stats" id="impact">
+    <div class="impact-stats__grid stagger">
+      <div class="impact-stats__item reveal">
+        <div class="impact-stats__icon">🍛</div>
+        <div class="impact-stats__value" data-target="12540">0</div>
+        <div class="impact-stats__label">Meals Rescued</div>
+      </div>
+      <div class="impact-stats__item reveal">
+        <div class="impact-stats__icon">🏪</div>
+        <div class="impact-stats__value" data-target="120">0</div>
+        <div class="impact-stats__label">Food Providers</div>
+      </div>
+      <div class="impact-stats__item reveal">
+        <div class="impact-stats__icon">🤝</div>
+        <div class="impact-stats__value" data-target="48">0</div>
+        <div class="impact-stats__label">NGO Partners</div>
+      </div>
+      <div class="impact-stats__item reveal">
+        <div class="impact-stats__icon">🚚</div>
+        <div class="impact-stats__value" data-target="8420">0</div>
+        <div class="impact-stats__label">Successful Pickups</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== How FoodRescue Works ===== -->
+  <section class="how-it-works section" id="how-it-works">
+    <div class="section-header">
+      <span class="section-label">How It Works</span>
+      <h2>Simple. Transparent. Impactful.</h2>
+      <p>FoodRescue connects the dots between surplus food and hungry communities in just four steps.</p>
+    </div>
+
+    <div class="how-it-works__grid stagger">
+      <div class="how-it-works__step reveal">
+        <div class="how-it-works__number">01</div>
+        <div class="how-it-works__icon">📋</div>
+        <h4 class="how-it-works__title">List Surplus Food</h4>
+        <p class="how-it-works__desc">Providers list their surplus food with quantity, expiry time, and pickup location.</p>
+      </div>
+      <div class="how-it-works__step reveal">
+        <div class="how-it-works__number">02</div>
+        <div class="how-it-works__icon">✋</div>
+        <h4 class="how-it-works__title">NGO Claims Food</h4>
+        <p class="how-it-works__desc">Nearby NGOs discover available food and claim donations for their community.</p>
+      </div>
+      <div class="how-it-works__step reveal">
+        <div class="how-it-works__number">03</div>
+        <div class="how-it-works__icon">🚴</div>
+        <h4 class="how-it-works__title">Volunteer Picks Up</h4>
+        <p class="how-it-works__desc">Volunteers accept pickup tasks and deliver rescued food to the NGO.</p>
+      </div>
+      <div class="how-it-works__step reveal">
+        <div class="how-it-works__number">04</div>
+        <div class="how-it-works__icon">❤️</div>
+        <h4 class="how-it-works__title">Food Reaches People</h4>
+        <p class="how-it-works__desc">Good food reaches communities in need instead of going to waste.</p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== User Roles ===== -->
+  <section class="user-roles section" id="about">
+    <div class="section-header">
+      <span class="section-label">Join the Mission</span>
+      <h2>Who Can Use FoodRescue?</h2>
+      <p>Whether you have surplus food, need food for your community, or want to volunteer — there's a role for you.</p>
+    </div>
+
+    <div class="user-roles__grid stagger">
+      <div class="user-roles__card reveal">
+        <div class="user-roles__icon">🏪</div>
+        <h4 class="user-roles__title">Food Providers</h4>
+        <p class="user-roles__desc">Restaurants, hotels, caterers, event organizers, and messes. List your surplus food before it goes to waste.</p>
+        <a href="register.html" class="btn btn-primary">Become a Provider</a>
+      </div>
+      <div class="user-roles__card reveal">
+        <div class="user-roles__icon">🏢</div>
+        <h4 class="user-roles__title">NGOs</h4>
+        <p class="user-roles__desc">Discover available food donations nearby and claim them for your community. Coordinate pickups seamlessly.</p>
+        <a href="register.html" class="btn btn-primary">Join as NGO</a>
+      </div>
+      <div class="user-roles__card reveal">
+        <div class="user-roles__icon">🚴</div>
+        <h4 class="user-roles__title">Volunteers</h4>
+        <p class="user-roles__desc">Help collect and deliver rescued food from providers to NGOs. Make a direct impact in your community.</p>
+        <a href="register.html" class="btn btn-primary">Become a Volunteer</a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== Available Food ===== -->
+  <section class="available-food section" id="available-food">
+    <div class="section-header">
+      <span class="section-label">Available Now</span>
+      <h2>Available Near You</h2>
+      <p>Browse surplus food listings from nearby providers. Claim before they expire.</p>
+    </div>
+
+    <div class="available-food__grid stagger">
+      <!-- Food Card 1 -->
+      <div class="food-card reveal">
+        <img src="assets/images/food/meals.jpg" alt="Fresh Cooked Meals" class="food-card__img" loading="lazy">
+        <div class="food-card__body">
+          <div class="food-card__header">
+            <h5 class="food-card__name">Fresh Cooked Meals</h5>
+            <span class="badge badge-success">Available</span>
+          </div>
+          <div class="food-card__meta">
+            <div class="food-card__meta-item">
+              <span class="food-card__meta-icon">🏪</span>
+              <span>ABC Restaurant</span>
+            </div>
+            <div class="food-card__meta-item">
+              <span class="food-card__meta-icon">📦</span>
+              <span>50 Meals</span>
+            </div>
+            <div class="food-card__meta-item">
+              <span class="food-card__meta-icon">📍</span>
+              <span>Jaipur, Rajasthan</span>
+            </div>
+          </div>
+          <div class="food-card__footer">
+            <span class="food-card__expiry">⏰ Expires: 7:30 PM</span>
+            <a href="#" class="btn btn-primary btn-sm">View Details</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Food Card 2 -->
+      <div class="food-card reveal">
+        <img src="assets/images/food/biryani.jpg" alt="Chicken Biryani" class="food-card__img" loading="lazy">
+        <div class="food-card__body">
+          <div class="food-card__header">
+            <h5 class="food-card__name">Chicken Biryani</h5>
+            <span class="badge badge-warning">Expiring Soon</span>
+          </div>
+          <div class="food-card__meta">
+            <div class="food-card__meta-item">
+              <span class="food-card__meta-icon">🏪</span>
+              <span>Royal Kitchen</span>
+            </div>
+            <div class="food-card__meta-item">
+              <span class="food-card__meta-icon">📦</span>
+              <span>30 Servings</span>
+            </div>
+            <div class="food-card__meta-item">
+              <span class="food-card__meta-icon">📍</span>
+              <span>Delhi, NCR</span>
+            </div>
+          </div>
+          <div class="food-card__footer">
+            <span class="food-card__expiry">⏰ Expires: 6:00 PM</span>
+            <a href="#" class="btn btn-primary btn-sm">View Details</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Food Card 3 -->
+      <div class="food-card reveal">
+        <img src="assets/images/food/bread.jpg" alt="Fresh Baked Bread" class="food-card__img" loading="lazy">
+        <div class="food-card__body">
+          <div class="food-card__header">
+            <h5 class="food-card__name">Fresh Baked Bread</h5>
+            <span class="badge badge-success">Available</span>
+          </div>
+          <div class="food-card__meta">
+            <div class="food-card__meta-item">
+              <span class="food-card__meta-icon">🏪</span>
+              <span>City Bakery</span>
+            </div>
+            <div class="food-card__meta-item">
+              <span class="food-card__meta-icon">📦</span>
+              <span>100 Loaves</span>
+            </div>
+            <div class="food-card__meta-item">
+              <span class="food-card__meta-icon">📍</span>
+              <span>Mumbai, MH</span>
+            </div>
+          </div>
+          <div class="food-card__footer">
+            <span class="food-card__expiry">⏰ Expires: 9:00 PM</span>
+            <a href="#" class="btn btn-primary btn-sm">View Details</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== Map Section (Placeholder) ===== -->
+  <section class="map-section section">
+    <div class="section-header">
+      <span class="section-label">Discover</span>
+      <h2>Available Food Near You</h2>
+      <p>Find food providers, NGOs, and pickup points in your area.</p>
+    </div>
+
+    <div class="map-placeholder">
+      <div class="map-placeholder__icon">🗺️</div>
+      <div class="map-placeholder__text">Interactive Map Coming Soon</div>
+      <div class="map-placeholder__hint">Map integration will display real-time food availability and pickup locations.</div>
+    </div>
+  </section>
+
+
+  <!-- ===== Impact Story ===== -->
+  <section class="impact-story" style="background-image: url('assets/images/community.jpg');">
+    <div class="impact-story__inner">
+      <blockquote class="impact-story__quote reveal">
+        "Every meal rescued is one less meal wasted and one more family fed."
+      </blockquote>
+
+      <div class="impact-story__flow reveal">
+        <div class="impact-story__flow-step">
+          <div class="impact-story__flow-icon">🗑️</div>
+          <div class="impact-story__flow-label">Food Waste</div>
+        </div>
+        <div class="impact-story__flow-arrow">→</div>
+        <div class="impact-story__flow-step">
+          <div class="impact-story__flow-icon">🍱</div>
+          <div class="impact-story__flow-label">FoodRescue</div>
+        </div>
+        <div class="impact-story__flow-arrow">→</div>
+        <div class="impact-story__flow-step">
+          <div class="impact-story__flow-icon">❤️</div>
+          <div class="impact-story__flow-label">Community Impact</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== Environmental Impact ===== -->
+  <section class="env-impact section" id="env-impact">
+    <div class="section-header">
+      <span class="section-label">Our Impact</span>
+      <h2>Making a Measurable Difference</h2>
+      <p>Every food rescue creates a ripple effect of positive environmental and social change.</p>
+    </div>
+
+    <div class="env-impact__grid stagger">
+      <div class="env-impact__card reveal">
+        <div class="env-impact__icon">🍱</div>
+        <!-- TODO: Replace static values with backend response -->
+        <div class="env-impact__value" data-target="12540">0</div>
+        <div class="env-impact__label">Meals Rescued</div>
+      </div>
+      <div class="env-impact__card reveal">
+        <div class="env-impact__icon">🌱</div>
+        <div class="env-impact__value" data-target="4200">0</div>
+        <div class="env-impact__label">Kg Food Waste Reduced</div>
+      </div>
+      <div class="env-impact__card reveal">
+        <div class="env-impact__icon">🚚</div>
+        <div class="env-impact__value" data-target="8420">0</div>
+        <div class="env-impact__label">Pickups Completed</div>
+      </div>
+      <div class="env-impact__card reveal">
+        <div class="env-impact__icon">🤝</div>
+        <div class="env-impact__value" data-target="156">0</div>
+        <div class="env-impact__label">Communities Supported</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== CTA Section ===== -->
+  <section class="cta-section" id="contact">
+    <div class="cta-section__inner">
+      <h2 class="cta-section__title">Ready to Make a Difference?</h2>
+      <p class="cta-section__desc">
+        Join thousands of providers, NGOs, and volunteers who are already rescuing food and building stronger communities.
+      </p>
+      <div class="cta-section__actions">
+        <a href="register.html" class="btn btn-lg" style="background:#fff;color:#166534;font-weight:700;">Get Started Free</a>
+        <a href="#how-it-works" class="btn btn-outline btn-lg">Learn More</a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__grid">
+        <div>
+          <div class="footer__brand">🍱 Food<span style="color:#16A34A">Rescue</span></div>
+          <p class="footer__brand-desc">
+            Connecting surplus food with communities in need. Together, we can reduce food waste and feed more people.
+          </p>
+        </div>
+        <div>
+          <h5 class="footer__heading">Platform</h5>
+          <a href="#how-it-works" class="footer__link">How It Works</a>
+          <a href="#available-food" class="footer__link">Available Food</a>
+          <a href="register.html" class="footer__link">Become a Provider</a>
+          <a href="register.html" class="footer__link">Join as NGO</a>
+          <a href="register.html" class="footer__link">Volunteer</a>
+        </div>
+        <div>
+          <h5 class="footer__heading">Company</h5>
+          <a href="#about" class="footer__link">About Us</a>
+          <a href="#impact" class="footer__link">Our Impact</a>
+          <a href="#" class="footer__link">Blog</a>
+          <a href="#contact" class="footer__link">Contact</a>
+        </div>
+        <div>
+          <h5 class="footer__heading">Support</h5>
+          <a href="#" class="footer__link">Help Center</a>
+          <a href="#" class="footer__link">Privacy Policy</a>
+          <a href="#" class="footer__link">Terms of Service</a>
+          <a href="#" class="footer__link">FAQ</a>
+        </div>
+      </div>
+
+      <div class="footer__bottom">
+        <span>&copy; 2024 FoodRescue. All rights reserved.</span>
+        <div class="footer__socials">
+          <a href="#" class="footer__social-link" aria-label="Twitter">𝕏</a>
+          <a href="#" class="footer__social-link" aria-label="Instagram">📷</a>
+          <a href="#" class="footer__social-link" aria-label="LinkedIn">💼</a>
+          <a href="#" class="footer__social-link" aria-label="GitHub">⌨</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- JS -->
+  <script src="assets/js/main.js"></script>
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
