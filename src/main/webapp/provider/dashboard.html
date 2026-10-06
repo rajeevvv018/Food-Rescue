@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Provider Dashboard — FoodRescue</title>
+  <meta name="description" content="Manage your surplus food listings, track claims, and monitor pickup status.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/global.css">
+  <link rel="stylesheet" href="../assets/css/navbar.css">
+  <link rel="stylesheet" href="../assets/css/dashboard.css">
+  <link rel="stylesheet" href="../assets/css/responsive.css">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍱</text></svg>">
+</head>
+<body>
+
+  <!-- ===== Dashboard Navbar ===== -->
+  <nav class="navbar navbar--solid" id="navbar">
+    <div class="navbar__inner">
+      <div style="display:flex;align-items:center;gap:1rem;">
+        <button class="sidebar-toggle-btn" id="sidebar-toggle" aria-label="Toggle sidebar" style="display:none;background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--color-text);">☰</button>
+        <a href="../index.html" class="navbar__brand" style="color:var(--color-text);">
+          <span class="navbar__brand-icon">🍱</span>
+          Food<span class="navbar__brand-highlight">Rescue</span>
+        </a>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:1rem;">
+        <!-- Notifications -->
+        <div class="notification-dropdown" id="notification-dropdown">
+          <button class="notification-btn" id="notification-btn" aria-label="Notifications">
+            🔔
+            <span class="notification-btn__count" id="notification-count">3</span>
+          </button>
+          <div class="notification-panel" id="notification-panel">
+            <div class="notification-panel__header">
+              <span class="notification-panel__title">Notifications</span>
+              <button class="notification-panel__mark-read" id="mark-all-read">Mark all read</button>
+            </div>
+            <div class="notification-panel__list">
+              <div class="notification-item notification-item--unread">
+                <div class="notification-item__icon notification-item__icon--success">✅</div>
+                <div class="notification-item__content">
+                  <div class="notification-item__title">Food claim approved</div>
+                  <div class="notification-item__time">2 minutes ago</div>
+                </div>
+                <div class="notification-item__dot"></div>
+              </div>
+              <div class="notification-item notification-item--unread">
+                <div class="notification-item__icon notification-item__icon--info">🚴</div>
+                <div class="notification-item__content">
+                  <div class="notification-item__title">Volunteer assigned for pickup</div>
+                  <div class="notification-item__time">15 minutes ago</div>
+                </div>
+                <div class="notification-item__dot"></div>
+              </div>
+              <div class="notification-item notification-item--unread">
+                <div class="notification-item__icon notification-item__icon--warning">⏰</div>
+                <div class="notification-item__content">
+                  <div class="notification-item__title">Listing expiring soon</div>
+                  <div class="notification-item__time">1 hour ago</div>
+                </div>
+                <div class="notification-item__dot"></div>
+              </div>
+              <div class="notification-item">
+                <div class="notification-item__icon notification-item__icon--success">✅</div>
+                <div class="notification-item__content">
+                  <div class="notification-item__title">Pickup completed successfully</div>
+                  <div class="notification-item__time">3 hours ago</div>
+                </div>
+              </div>
+            </div>
+            <div class="notification-panel__footer">
+              <a href="#">View all notifications</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile -->
+        <div style="display:flex;align-items:center;gap:0.75rem;cursor:pointer;">
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--color-primary-light);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--color-primary);font-size:0.875rem;">AB</div>
+          <span style="font-size:0.875rem;font-weight:500;color:var(--color-text);">Arjun B.</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- ===== Dashboard Layout ===== -->
+  <div class="dashboard">
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__header">
+        <span class="sidebar__role">🏪 Provider</span>
+        <div class="sidebar__user-name">Arjun Bhardwaj</div>
+        <div class="sidebar__user-email">arjun@restaurant.com</div>
+      </div>
+
+      <nav class="sidebar__nav">
+        <span class="sidebar__section-label">Main</span>
+        <a href="#" class="sidebar__link sidebar__link--active" data-page="dashboard">
+          <span class="sidebar__link-icon">📊</span> Dashboard
+        </a>
+        <a href="#" class="sidebar__link" data-page="add-food">
+          <span class="sidebar__link-icon">➕</span> Add Food
+        </a>
+        <a href="#" class="sidebar__link" data-page="listings">
+          <span class="sidebar__link-icon">📋</span> My Listings
+        </a>
+
+        <span class="sidebar__section-label">Management</span>
+        <a href="#" class="sidebar__link" data-page="claims">
+          <span class="sidebar__link-icon">✋</span> Claims
+          <span class="sidebar__link-badge">2</span>
+        </a>
+        <a href="#" class="sidebar__link" data-page="pickups">
+          <span class="sidebar__link-icon">🚚</span> Pickup Status
+        </a>
+        <a href="#" class="sidebar__link" data-page="notifications">
+          <span class="sidebar__link-icon">🔔</span> Notifications
+          <span class="sidebar__link-badge">3</span>
+        </a>
+
+        <span class="sidebar__section-label">Account</span>
+        <a href="#" class="sidebar__link" data-page="profile">
+          <span class="sidebar__link-icon">👤</span> Profile
+        </a>
+      </nav>
+
+      <div class="sidebar__footer">
+        <button class="sidebar__logout" id="logout-btn">
+          <span class="sidebar__link-icon">🚪</span> Logout
+        </button>
+      </div>
+    </aside>
+
+
+    <!-- ===== Main Content ===== -->
+    <main class="dashboard__main">
+
+      <!-- Dashboard Overview -->
+      <div id="page-dashboard">
+        <div class="dashboard__header">
+          <div>
+            <h1 class="dashboard__title">Provider Dashboard</h1>
+            <p class="dashboard__subtitle">Welcome back, Arjun! Here's your overview.</p>
+          </div>
+          <a href="#" class="btn btn-primary" onclick="showPage('add-food');return false;">
+            ➕ Add Food Listing
+          </a>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-card__header">
+              <div class="stat-card__icon stat-card__icon--green">📋</div>
+              <div class="stat-card__trend stat-card__trend--up">↑ 12%</div>
+            </div>
+            <!-- TODO: Replace mock data with backend response -->
+            <div class="stat-card__value">8</div>
+            <div class="stat-card__label">Active Listings</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__header">
+              <div class="stat-card__icon stat-card__icon--blue">✋</div>
+              <div class="stat-card__trend stat-card__trend--up">↑ 5%</div>
+            </div>
+            <div class="stat-card__value">14</div>
+            <div class="stat-card__label">Claimed Food</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__header">
+              <div class="stat-card__icon stat-card__icon--yellow">✅</div>
+            </div>
+            <div class="stat-card__value">42</div>
+            <div class="stat-card__label">Completed Donations</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__header">
+              <div class="stat-card__icon stat-card__icon--red">🚚</div>
+            </div>
+            <div class="stat-card__value">3</div>
+            <div class="stat-card__label">Pending Pickups</div>
+          </div>
+        </div>
+
+        <!-- Recent Listings Table -->
+        <div class="dashboard-panel">
+          <div class="dashboard-panel__header">
+            <h3 class="dashboard-panel__title">Recent Food Listings</h3>
+            <a href="#" class="btn btn-sm btn-secondary" onclick="showPage('listings');return false;">View All</a>
+          </div>
+          <div class="dashboard-panel__body" style="padding:0;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Food</th>
+                  <th>Quantity</th>
+                  <th>Expiry</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- TODO: Replace mock data with backend response -->
+                <tr>
+                  <td>
+                    <div class="data-table__food-info">
+                      <img src="../assets/images/food/meals.jpg" alt="Meals" class="data-table__food-img">
+                      <div>
+                        <div class="data-table__food-name">Fresh Cooked Meals</div>
+                        <div class="data-table__food-provider">Added 2h ago</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>50 Meals</td>
+                  <td>Today, 7:30 PM</td>
+                  <td><span class="badge badge-success">Available</span></td>
+                  <td><button class="btn btn-sm btn-secondary">Edit</button></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="data-table__food-info">
+                      <img src="../assets/images/food/biryani.jpg" alt="Biryani" class="data-table__food-img">
+                      <div>
+                        <div class="data-table__food-name">Chicken Biryani</div>
+                        <div class="data-table__food-provider">Added 5h ago</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>30 Servings</td>
+                  <td>Today, 6:00 PM</td>
+                  <td><span class="badge badge-info">Claimed</span></td>
+                  <td><button class="btn btn-sm btn-secondary">View Claim</button></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="data-table__food-info">
+                      <img src="../assets/images/food/bread.jpg" alt="Bread" class="data-table__food-img">
+                      <div>
+                        <div class="data-table__food-name">Fresh Baked Bread</div>
+                        <div class="data-table__food-provider">Added 1 day ago</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>100 Loaves</td>
+                  <td>Yesterday</td>
+                  <td><span class="badge badge-neutral">Completed</span></td>
+                  <td><button class="btn btn-sm btn-secondary">Details</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Add Food Page -->
+      <div id="page-add-food" class="hidden">
+        <div class="dashboard__header">
+          <div>
+            <h1 class="dashboard__title">Add Food Listing</h1>
+            <p class="dashboard__subtitle">List your surplus food so it can reach people in need.</p>
+          </div>
+        </div>
+
+        <div class="dashboard-panel">
+          <div class="dashboard-panel__body">
+            <form class="add-food-form" id="add-food-form">
+              <div class="form-group">
+                <label for="food-name" class="form-label">Food Name</label>
+                <input type="text" id="food-name" name="foodName" class="form-input" placeholder="e.g. Fresh Cooked Meals" required>
+              </div>
+              <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                <div class="form-group">
+                  <label for="food-quantity" class="form-label">Quantity</label>
+                  <input type="text" id="food-quantity" name="quantity" class="form-input" placeholder="e.g. 50 Meals" required>
+                </div>
+                <div class="form-group">
+                  <label for="food-expiry" class="form-label">Expiry Time</label>
+                  <input type="datetime-local" id="food-expiry" name="expiryTime" class="form-input" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="food-description" class="form-label">Description</label>
+                <textarea id="food-description" name="description" class="form-input" rows="3" placeholder="Describe the food, packaging, and any dietary information." style="resize:vertical;"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="food-pickup" class="form-label">Pickup Address</label>
+                <input type="text" id="food-pickup" name="pickupAddress" class="form-input" placeholder="Full pickup address" required>
+              </div>
+              <div class="form-group">
+                <label for="food-image" class="form-label">Food Image (Optional)</label>
+                <input type="file" id="food-image" name="image" class="form-input" accept="image/*" style="padding:0.5rem;">
+              </div>
+              <div style="display:flex;gap:1rem;margin-top:1.5rem;">
+                <button type="submit" class="btn btn-primary">Publish Listing</button>
+                <button type="button" class="btn btn-secondary" onclick="showPage('dashboard')">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- My Listings Page -->
+      <div id="page-listings" class="hidden">
+        <div class="dashboard__header">
+          <div>
+            <h1 class="dashboard__title">My Listings</h1>
+            <p class="dashboard__subtitle">All your food listings in one place.</p>
+          </div>
+          <a href="#" class="btn btn-primary" onclick="showPage('add-food');return false;">➕ Add New</a>
+        </div>
+
+        <div class="dashboard-panel">
+          <div class="dashboard-panel__body" style="padding:0;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Food</th>
+                  <th>Quantity</th>
+                  <th>Posted</th>
+                  <th>Expiry</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- TODO: Replace mock data with backend response -->
+                <tr>
+                  <td>
+                    <div class="data-table__food-info">
+                      <img src="../assets/images/food/meals.jpg" alt="Meals" class="data-table__food-img">
+                      <div>
+                        <div class="data-table__food-name">Fresh Cooked Meals</div>
+                        <div class="data-table__food-provider">ABC Restaurant</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>50 Meals</td>
+                  <td>Today</td>
+                  <td>7:30 PM</td>
+                  <td><span class="badge badge-success">Available</span></td>
+                  <td>
+                    <div style="display:flex;gap:0.5rem;">
+                      <button class="btn btn-sm btn-secondary">Edit</button>
+                      <button class="btn btn-sm btn-danger">Cancel</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="data-table__food-info">
+                      <img src="../assets/images/food/biryani.jpg" alt="Biryani" class="data-table__food-img">
+                      <div>
+                        <div class="data-table__food-name">Chicken Biryani</div>
+                        <div class="data-table__food-provider">ABC Restaurant</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>30 Servings</td>
+                  <td>Today</td>
+                  <td>6:00 PM</td>
+                  <td><span class="badge badge-info">Claimed</span></td>
+                  <td>
+                    <div style="display:flex;gap:0.5rem;">
+                      <button class="btn btn-sm btn-secondary">View Claim</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="data-table__food-info">
+                      <img src="../assets/images/food/bread.jpg" alt="Bread" class="data-table__food-img">
+                      <div>
+                        <div class="data-table__food-name">Fresh Baked Bread</div>
+                        <div class="data-table__food-provider">ABC Restaurant</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>100 Loaves</td>
+                  <td>Yesterday</td>
+                  <td>Expired</td>
+                  <td><span class="badge badge-neutral">Completed</span></td>
+                  <td>
+                    <div style="display:flex;gap:0.5rem;">
+                      <button class="btn btn-sm btn-secondary">Details</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Claims Page -->
+      <div id="page-claims" class="hidden">
+        <div class="dashboard__header">
+          <div>
+            <h1 class="dashboard__title">Claims</h1>
+            <p class="dashboard__subtitle">NGOs that have claimed your food listings.</p>
+          </div>
+        </div>
+        <div class="dashboard-panel">
+          <div class="dashboard-panel__body" style="padding:0;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Food</th>
+                  <th>Claimed By</th>
+                  <th>Quantity</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- TODO: Replace mock data with backend response -->
+                <tr>
+                  <td><div class="data-table__food-name">Chicken Biryani</div></td>
+                  <td>Hope Foundation NGO</td>
+                  <td>30 Servings</td>
+                  <td><span class="badge badge-warning">Pending Pickup</span></td>
+                  <td><button class="btn btn-sm btn-secondary">View Details</button></td>
+                </tr>
+                <tr>
+                  <td><div class="data-table__food-name">Rice &amp; Dal</div></td>
+                  <td>Community Care Trust</td>
+                  <td>40 Meals</td>
+                  <td><span class="badge badge-success">Picked Up</span></td>
+                  <td><button class="btn btn-sm btn-secondary">View Details</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Pickups Page -->
+      <div id="page-pickups" class="hidden">
+        <div class="dashboard__header">
+          <div>
+            <h1 class="dashboard__title">Pickup Status</h1>
+            <p class="dashboard__subtitle">Track the status of food pickups from your location.</p>
+          </div>
+        </div>
+        <div class="dashboard-panel">
+          <div class="dashboard-panel__body" style="padding:0;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Food</th>
+                  <th>Volunteer</th>
+                  <th>NGO</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- TODO: Replace mock data with backend response -->
+                <tr>
+                  <td><div class="data-table__food-name">Chicken Biryani</div></td>
+                  <td>Rahul V.</td>
+                  <td>Hope Foundation</td>
+                  <td><span class="badge badge-warning">On the way</span></td>
+                </tr>
+                <tr>
+                  <td><div class="data-table__food-name">Rice &amp; Dal</div></td>
+                  <td>Priya K.</td>
+                  <td>Community Care</td>
+                  <td><span class="badge badge-success">Delivered</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Notifications Page -->
+      <div id="page-notifications" class="hidden">
+        <div class="dashboard__header">
+          <div>
+            <h1 class="dashboard__title">Notifications</h1>
+            <p class="dashboard__subtitle">Stay updated with your food rescue activities.</p>
+          </div>
+        </div>
+        <div class="dashboard-panel">
+          <div class="dashboard-panel__body">
+            <!-- TODO: Replace mock data with backend response -->
+            <div class="notification-item notification-item--unread" style="border-radius:var(--radius-lg);margin-bottom:0.5rem;">
+              <div class="notification-item__icon notification-item__icon--success">✅</div>
+              <div class="notification-item__content">
+                <div class="notification-item__title">Food claim approved — Chicken Biryani claimed by Hope Foundation</div>
+                <div class="notification-item__time">2 minutes ago</div>
+              </div>
+            </div>
+            <div class="notification-item notification-item--unread" style="border-radius:var(--radius-lg);margin-bottom:0.5rem;">
+              <div class="notification-item__icon notification-item__icon--info">🚴</div>
+              <div class="notification-item__content">
+                <div class="notification-item__title">Volunteer Rahul V. assigned for pickup</div>
+                <div class="notification-item__time">15 minutes ago</div>
+              </div>
+            </div>
+            <div class="notification-item" style="border-radius:var(--radius-lg);margin-bottom:0.5rem;">
+              <div class="notification-item__icon notification-item__icon--warning">⏰</div>
+              <div class="notification-item__content">
+                <div class="notification-item__title">Your listing "Fresh Meals" is expiring in 1 hour</div>
+                <div class="notification-item__time">1 hour ago</div>
+              </div>
+            </div>
+            <div class="notification-item" style="border-radius:var(--radius-lg);margin-bottom:0.5rem;">
+              <div class="notification-item__icon notification-item__icon--success">✅</div>
+              <div class="notification-item__content">
+                <div class="notification-item__title">Pickup completed — Rice &amp; Dal delivered successfully</div>
+                <div class="notification-item__time">3 hours ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Profile Page -->
+      <div id="page-profile" class="hidden">
+        <div class="dashboard__header">
+          <div>
+            <h1 class="dashboard__title">Profile</h1>
+            <p class="dashboard__subtitle">Manage your account information.</p>
+          </div>
+        </div>
+
+        <div class="profile-card">
+          <div class="profile-card__header">
+            <div class="profile-card__avatar">AB</div>
+            <div>
+              <div class="profile-card__name">Arjun Bhardwaj</div>
+              <span class="badge badge-success profile-card__role">Provider</span>
+            </div>
+          </div>
+          <div class="profile-card__body">
+            <div class="profile-field">
+              <div class="profile-field__label">Full Name</div>
+              <div class="profile-field__value">Arjun Bhardwaj</div>
+            </div>
+            <div class="profile-field">
+              <div class="profile-field__label">Email</div>
+              <div class="profile-field__value">arjun@restaurant.com</div>
+            </div>
+            <div class="profile-field">
+              <div class="profile-field__label">Phone</div>
+              <div class="profile-field__value">+91 9876543210</div>
+            </div>
+            <div class="profile-field">
+              <div class="profile-field__label">Role</div>
+              <div class="profile-field__value">Food Provider</div>
+            </div>
+            <div class="profile-field">
+              <div class="profile-field__label">Address</div>
+              <div class="profile-field__value">ABC Restaurant, MI Road, Jaipur, Rajasthan</div>
+            </div>
+          </div>
+          <div class="profile-card__footer">
+            <button class="btn btn-primary">Edit Profile</button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="../assets/js/dashboard.js"></script>
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

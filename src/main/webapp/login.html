@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — FoodRescue</title>
+  <meta name="description" content="Login to your FoodRescue account to manage food donations, claims, and deliveries.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/global.css">
+  <link rel="stylesheet" href="assets/css/forms.css">
+  <link rel="stylesheet" href="assets/css/responsive.css">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍱</text></svg>">
+</head>
+<body>
+
+  <div class="auth-page">
+    <!-- Left Branding Panel -->
+    <div class="auth-branding">
+      <div class="auth-branding__logo">🍱 FoodRescue</div>
+      <h2 class="auth-branding__title">Welcome Back</h2>
+      <p class="auth-branding__desc">
+        Continue your mission to rescue food and support communities in need.
+      </p>
+      <div class="auth-branding__stats">
+        <div class="auth-branding__stat">
+          <div class="auth-branding__stat-value">12K+</div>
+          <div class="auth-branding__stat-label">Meals Rescued</div>
+        </div>
+        <div class="auth-branding__stat">
+          <div class="auth-branding__stat-value">120+</div>
+          <div class="auth-branding__stat-label">Providers</div>
+        </div>
+        <div class="auth-branding__stat">
+          <div class="auth-branding__stat-value">48+</div>
+          <div class="auth-branding__stat-label">NGO Partners</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Panel -->
+    <div class="auth-form-panel">
+      <div class="auth-form-container">
+        <div class="auth-form__header">
+          <a href="index.html" style="display:inline-flex;align-items:center;gap:0.5rem;font-size:0.875rem;color:var(--color-text-muted);margin-bottom:1.5rem;">
+            ← Back to Home
+          </a>
+          <h1 class="auth-form__title">Sign In</h1>
+          <p class="auth-form__subtitle">
+            Don't have an account? <a href="register.html">Create one</a>
+          </p>
+        </div>
+
+        <!-- Alert placeholder -->
+        <div id="login-alert" class="auth-alert auth-alert--error hidden">
+          <span>⚠️</span>
+          <span id="login-alert-text">Invalid email or password.</span>
+        </div>
+
+        <form class="auth-form" id="login-form" action="#" method="POST">
+          <div class="form-group">
+            <label for="login-email" class="form-label">Email Address</label>
+            <input type="email" id="login-email" name="email" class="form-input" placeholder="you@example.com" required>
+          </div>
+
+          <div class="form-group">
+            <label for="login-password" class="form-label">Password</label>
+            <div class="password-wrapper">
+              <input type="password" id="login-password" name="password" class="form-input" placeholder="Enter your password" required>
+              <button type="button" class="password-toggle" id="toggle-password" aria-label="Toggle password visibility">👁</button>
+            </div>
+          </div>
+
+          <a href="#" class="auth-form__forgot">Forgot password?</a>
+
+          <div class="form-check">
+            <input type="checkbox" id="remember-me" name="remember">
+            <label for="remember-me">Remember me for 30 days</label>
+          </div>
+
+          <button type="submit" class="auth-form__submit" id="login-submit">
+            Sign In
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/auth.js"></script>
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
