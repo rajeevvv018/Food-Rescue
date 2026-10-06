@@ -8,8 +8,7 @@
   'use strict';
 
   // ===== Mock Notification Data =====
-  // TODO: Replace with backend API call
-  // Example: fetch('/notifications?unread=true')
+  // TODO: Replace with data from NotificationDAO via Servlet/JSP when backend is ready
   var mockNotifications = [
     {
       id: 1,

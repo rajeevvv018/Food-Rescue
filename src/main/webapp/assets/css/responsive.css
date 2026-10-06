@@ -2,11 +2,231 @@
    FoodRescue — Responsive Overrides
    ================================================
    Most responsive rules are co-located with their
-   component CSS files. This file contains any
-   cross-cutting responsive utilities.
+   component CSS files. This file handles critical
+   cross-cutting responsive issues that need global
+   scope, such as overflow prevention, table
+   scrolling, and dashboard layout on small screens.
    ================================================ */
 
-/* --- Print --- */
+
+/* ===== Prevent horizontal overflow globally ===== */
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+
+/* ===== Tables: horizontal scroll on mobile ===== */
+.dashboard-panel__body {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.data-table {
+  min-width: 600px; /* forces scroll rather than overflow */
+}
+
+
+/* ===== Responsive stat grid ===== */
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+}
+
+
+/* ===== Dashboard sidebar on mobile ===== */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    position: fixed;
+    z-index: 1100;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    transition: transform 0.3s ease;
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+  }
+
+  .dashboard__main {
+    margin-left: 0 !important;
+  }
+
+  .sidebar-toggle-btn {
+    display: block !important;
+  }
+}
+
+
+/* ===== Auth page: stack on mobile ===== */
+@media (max-width: 768px) {
+  .auth-page {
+    flex-direction: column;
+  }
+
+  .auth-branding {
+    min-height: 220px;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .auth-branding__stats {
+    justify-content: center;
+  }
+
+  .auth-form-panel {
+    overflow-y: auto;
+    padding: 2rem 1.25rem;
+  }
+
+  .auth-form-container {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+  }
+}
+
+
+/* ===== Hero adjustments on mobile ===== */
+@media (max-width: 640px) {
+  .hero__title {
+    font-size: 2.25rem !important;
+  }
+
+  .hero__subtitle {
+    font-size: 1rem !important;
+  }
+
+  .hero__actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .hero__actions .hero__btn-primary,
+  .hero__actions .hero__btn-secondary {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .hero__stats {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+}
+
+
+/* ===== Section spacing on mobile ===== */
+@media (max-width: 640px) {
+  .section {
+    padding-block: 4rem;
+  }
+
+  .section-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .section-header h2 {
+    font-size: 1.75rem;
+  }
+}
+
+
+/* ===== Pickup card status flow on mobile ===== */
+@media (max-width: 600px) {
+  .status-flow {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .status-flow__arrow {
+    display: none;
+  }
+
+  .pickup-card__actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .pickup-card__actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+
+/* ===== Form rows stack on mobile ===== */
+@media (max-width: 640px) {
+  .form-row {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+
+/* ===== Dashboard header on mobile ===== */
+@media (max-width: 640px) {
+  .dashboard__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .dashboard__header .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+
+/* ===== Food cards on mobile ===== */
+@media (max-width: 480px) {
+  .available-food__grid,
+  .user-roles__grid,
+  .env-impact__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .food-card__footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .food-card__footer .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+
+/* ===== Navbar on mobile ===== */
+@media (max-width: 768px) {
+  .navbar__nav {
+    display: none;
+  }
+
+  .navbar__actions {
+    display: none;
+  }
+
+  .navbar__toggle {
+    display: flex !important;
+  }
+
+  .navbar__mobile-menu.active {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+
+/* ===== Print styles ===== */
 @media print {
   .navbar,
   .sidebar,
@@ -25,7 +245,8 @@
   }
 }
 
-/* --- Reduced motion --- */
+
+/* ===== Reduced motion ===== */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -44,13 +265,8 @@
   }
 }
 
-/* --- Focus visible for keyboard users --- */
-*:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
 
-/* --- Screen reader only --- */
+/* ===== Screen reader only (alias for .visually-hidden) ===== */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -59,5 +275,6 @@
   margin: -1px;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
   border: 0;
 }

@@ -258,6 +258,19 @@ p {
   color: var(--color-primary);
 }
 
+/* White button for use on dark/green CTA backgrounds */
+.btn-cta-white {
+  background-color: var(--color-bg-white);
+  color: var(--color-primary-dark);
+  font-weight: var(--font-weight-bold);
+  border-color: transparent;
+}
+.btn-cta-white:hover {
+  background-color: var(--color-primary-light);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
 .btn-danger {
   background-color: var(--color-danger);
   color: var(--color-bg-white);
@@ -350,6 +363,48 @@ p {
 .badge-neutral {
   background-color: var(--color-border-light);
   color: var(--color-text-secondary);
+}
+
+/* ---- Domain-specific status badges (match backend status enums) ---- */
+/* AVAILABLE */
+.badge-available {
+  background-color: var(--color-success-light);
+  color: var(--color-primary-dark);
+}
+/* CLAIMED */
+.badge-claimed {
+  background-color: var(--color-info-light);
+  color: #1E40AF;
+}
+/* PENDING */
+.badge-pending {
+  background-color: var(--color-warning-light);
+  color: #92400E;
+}
+/* APPROVED */
+.badge-approved {
+  background-color: #D1FAE5;
+  color: #065F46;
+}
+/* READY_FOR_PICKUP */
+.badge-ready {
+  background-color: #EDE9FE;
+  color: #5B21B6;
+}
+/* COMPLETED */
+.badge-completed {
+  background-color: var(--color-border-light);
+  color: var(--color-text-secondary);
+}
+/* EXPIRED */
+.badge-expired {
+  background-color: var(--color-danger-light);
+  color: #991B1B;
+}
+/* CANCELLED */
+.badge-cancelled {
+  background-color: #F3F4F6;
+  color: #6B7280;
 }
 
 
@@ -623,6 +678,31 @@ p {
 .text-primary { color: var(--color-primary) !important; }
 .text-muted   { color: var(--color-text-muted) !important; }
 .text-white   { color: var(--color-bg-white) !important; }
+
+/* Accessibility: screen-reader only text */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Keyboard focus-visible styles */
+:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Suppress focus ring for mouse/touch interactions */
+:focus:not(:focus-visible) {
+  outline: none;
+}
 
 .flex  { display: flex; }
 .grid  { display: grid; }
