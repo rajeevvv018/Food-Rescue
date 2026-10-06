@@ -126,8 +126,7 @@
   var logoutBtn = document.getElementById('logout-btn');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', function () {
-      // TODO: Replace with actual backend logout request
-      // Example: fetch('/logout', { method: 'POST' })
+      // TODO: Replace with actual backend logout integration (e.g. redirect to LogoutServlet)
       if (confirm('Are you sure you want to logout?')) {
         window.location.href = '../login.html';
       }
@@ -145,8 +144,7 @@
       submitBtn.disabled = true;
       submitBtn.textContent = 'Publishing...';
 
-      // TODO: Replace with actual backend API call
-      // Example: fetch('/provider/addFood', { method: 'POST', body: new FormData(addFoodForm) })
+      // TODO: Replace with actual backend form submission to AddFoodServlet
       setTimeout(function () {
         submitBtn.textContent = 'Published!';
         submitBtn.style.background = 'var(--color-success)';

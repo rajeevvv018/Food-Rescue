@@ -43,27 +43,12 @@
         return;
       }
 
-      // Simulate loading
+      // Simulate loading state before submission
       submitBtn.disabled = true;
       submitBtn.textContent = 'Signing in...';
 
-      // TODO: Replace with actual backend login request
-      // Example: fetch('/login', { method: 'POST', body: formData })
-      setTimeout(function () {
-        // Mock: check for demo credentials
-        if (email === 'provider@demo.com') {
-          window.location.href = 'provider/dashboard.html';
-        } else if (email === 'ngo@demo.com') {
-          window.location.href = 'ngo/dashboard.html';
-        } else if (email === 'volunteer@demo.com') {
-          window.location.href = 'volunteer/dashboard.html';
-        } else {
-          // For demo, redirect to provider dashboard
-          showAlert(alertBox, alertText, 'Demo: Use provider@demo.com, ngo@demo.com, or volunteer@demo.com');
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Sign In';
-        }
-      }, 1000);
+      // Let the form submit natively to the Servlet endpoint
+      loginForm.submit();
     });
   }
 
@@ -101,23 +86,12 @@
         return;
       }
 
-      // Simulate loading
+      // Simulate loading state before submission
       submitBtn.disabled = true;
       submitBtn.textContent = 'Creating account...';
 
-      // TODO: Replace with actual backend register request
-      // Example: fetch('/register', { method: 'POST', body: JSON.stringify({...}) })
-      setTimeout(function () {
-        // Mock success — redirect to login
-        submitBtn.textContent = 'Account Created!';
-        alertBox.classList.remove('hidden', 'auth-alert--error');
-        alertBox.classList.add('auth-alert--success');
-        alertText.textContent = 'Account created successfully! Redirecting to login...';
-
-        setTimeout(function () {
-          window.location.href = 'login.html';
-        }, 1500);
-      }, 1200);
+      // Let the form submit natively to the Servlet endpoint
+      registerForm.submit();
     });
   }
 
