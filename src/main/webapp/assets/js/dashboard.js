@@ -45,6 +45,13 @@
 
     // Close mobile sidebar if open
     closeMobileSidebar();
+
+    // Trigger data fetch for specific pages
+    if (pageName === 'claims') {
+      if (typeof loadProviderClaims === 'function') {
+        loadProviderClaims();
+      }
+    }
   };
 
 
@@ -138,28 +145,12 @@
   var addFoodForm = document.getElementById('add-food-form');
   if (addFoodForm) {
     addFoodForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-
+      // Allow real form submission, just disable button to prevent double submit
       var submitBtn = addFoodForm.querySelector('button[type="submit"]');
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Publishing...';
-
-      // TODO: Replace with actual backend form submission to AddFoodServlet
-      setTimeout(function () {
-        submitBtn.textContent = 'Published!';
-        submitBtn.style.background = 'var(--color-success)';
-
-        // Show toast
-        showToast('Food listing published successfully!', 'success');
-
-        setTimeout(function () {
-          addFoodForm.reset();
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Publish Listing';
-          submitBtn.style.background = '';
-          showPage('dashboard');
-        }, 1500);
-      }, 1000);
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Publishing...';
+      }
     });
   }
 
@@ -205,5 +196,138 @@
       }
     }, 4000);
   };
+  // ===== Provider Claims API Integration =====
+  function loadProviderClaims() {
+    var loading = document.getElementById('claims-loading');
+    var error = document.getElementById('claims-error');
+    var empty = document.getElementById('claims-empty');
+    var container = document.getElementById('claims-table-container');
+    var tbody = document.getElementById('claims-table-body');
+
+    if (!loading || !error || !empty || !container || !tbody) return;
+
+    // Reset UI states
+    loading.classList.remove('hidden');
+    error.classList.add('hidden');
+    empty.classList.add('hidden');
+    container.classList.add('hidden');
+    tbody.innerHTML = '';
+
+    fetch('../provider/claims')
+      .then(function(response) {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(function(data) {
+        loading.classList.add('hidden');
+
+        if (!data || data.length === 0) {
+          empty.classList.remove('hidden');
+          return;
+        }
+
+        container.classList.remove('hidden');
+
+        data.forEach(function(claim) {
+          var tr = document.createElement('tr');
+
+          var tdId = document.createElement('td');
+          tdId.textContent = claim.claimId || '-';
+          tr.appendChild(tdId);
+
+          var tdFood = document.createElement('td');
+          var divFood = document.createElement('div');
+          divFood.className = 'data-table__food-name';
+          divFood.textContent = claim.foodName || 'Unknown Food';
+          tdFood.appendChild(divFood);
+          tr.appendChild(tdFood);
+
+          var tdNgo = document.createElement('td');
+          var ngoName = document.createElement('div');
+          ngoName.style.fontWeight = '500';
+          ngoName.textContent = claim.ngoName || 'Unknown NGO';
+          tdNgo.appendChild(ngoName);
+
+          if (claim.ngoPhone) {
+            var ngoPhone = document.createElement('div');
+            ngoPhone.style.fontSize = '0.75rem';
+            ngoPhone.style.color = 'var(--color-text-muted)';
+            ngoPhone.textContent = claim.ngoPhone;
+            tdNgo.appendChild(ngoPhone);
+          }
+          if (claim.ngoEmail) {
+            var ngoEmail = document.createElement('div');
+            ngoEmail.style.fontSize = '0.75rem';
+            ngoEmail.style.color = 'var(--color-text-muted)';
+            ngoEmail.textContent = claim.ngoEmail;
+            tdNgo.appendChild(ngoEmail);
+          }
+          tr.appendChild(tdNgo);
+
+          var tdQuantity = document.createElement('td');
+          tdQuantity.textContent = claim.claimedQuantity || '0';
+          tr.appendChild(tdQuantity);
+
+          var tdUnit = document.createElement('td');
+          tdUnit.textContent = claim.unit || '-';
+          tr.appendChild(tdUnit);
+
+          var tdStatus = document.createElement('td');
+          var badge = document.createElement('span');
+          badge.className = 'badge';
+
+          var status = (claim.status || '').toUpperCase();
+          badge.textContent = status;
+
+          if (status === 'PENDING') {
+            badge.classList.add('badge-warning');
+          } else if (status === 'APPROVED' || status === 'COMPLETED' || status === 'PICKED_UP') {
+            badge.classList.add('badge-success');
+          } else if (status === 'REJECTED' || status === 'CANCELLED') {
+            badge.classList.add('badge-danger');
+          } else {
+            badge.classList.add('badge-info');
+          }
+
+          tdStatus.appendChild(badge);
+          tr.appendChild(tdStatus);
+
+          var tdDate = document.createElement('td');
+          tdDate.textContent = claim.claimedAt ? new Date(claim.claimedAt).toLocaleString() : '-';
+          tr.appendChild(tdDate);
+
+          var tdActions = document.createElement('td');
+          if (status === 'PENDING') {
+            var divActions = document.createElement('div');
+            divActions.style.display = 'flex';
+            divActions.style.gap = '0.5rem';
+
+            var btnApprove = document.createElement('button');
+            btnApprove.className = 'btn btn-sm btn-success';
+            btnApprove.textContent = 'Approve';
+
+            var btnReject = document.createElement('button');
+            btnReject.className = 'btn btn-sm btn-danger';
+            btnReject.textContent = 'Reject';
+
+            divActions.appendChild(btnApprove);
+            divActions.appendChild(btnReject);
+            tdActions.appendChild(divActions);
+          } else {
+            tdActions.textContent = '-';
+          }
+          tr.appendChild(tdActions);
+
+          tbody.appendChild(tr);
+        });
+      })
+      .catch(function(err) {
+        loading.classList.add('hidden');
+        error.classList.remove('hidden');
+        console.error('Error fetching provider claims:', err);
+      });
+  }
 
 })();
