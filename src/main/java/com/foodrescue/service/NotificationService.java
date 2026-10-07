@@ -15,77 +15,147 @@ public class NotificationService {
         this.notificationDAO = new NotificationDAO();
     }
 
-    // Method 1: Create Notification
-    public boolean createNotification(Notification notification) throws SQLException {
+    // Create a new notification
+    public boolean createNotification(Notification notification)
+            throws SQLException {
+
         if (notification == null) {
             return false;
         }
+
         if (notification.getUserId() <= 0) {
             return false;
         }
-        if (notification.getTitle() == null || notification.getTitle().trim().isEmpty()) {
-            return false;
-        }
-        if (notification.getMessage() == null || notification.getMessage().trim().isEmpty()) {
+
+        if (notification.getTitle() == null
+                || notification.getTitle().trim().isEmpty()) {
             return false;
         }
 
-        notification.setTitle(notification.getTitle().trim());
-        notification.setMessage(notification.getMessage().trim());
+        if (notification.getMessage() == null
+                || notification.getMessage().trim().isEmpty()) {
+            return false;
+        }
 
-        return notificationDAO.createNotification(notification);
+        notification.setTitle(
+                notification.getTitle().trim()
+        );
+
+        notification.setMessage(
+                notification.getMessage().trim()
+        );
+
+        // New notifications should be unread
+        notification.setRead(false);
+
+        return notificationDAO.createNotification(
+                notification
+        );
     }
 
-    // Method 2: Get Notification By ID
-    public Notification getNotificationById(long id) throws SQLException {
-        if (id <= 0) {
+    // Get notification by ID
+    public Notification getNotificationById(long notificationId)
+            throws SQLException {
+
+        if (notificationId <= 0) {
             return null;
         }
-        return notificationDAO.getNotificationById(id);
+
+        return notificationDAO.getNotificationById(
+                notificationId
+        );
     }
 
-    // Method 3: Get All Notifications
-    public List<Notification> getAllNotifications() throws SQLException {
+    // Get all notifications
+    public List<Notification> getAllNotifications()
+            throws SQLException {
+
         return notificationDAO.getAllNotifications();
     }
 
-    // Method 4: Get User Notifications
-    public List<Notification> getNotificationsByUser(long userId) throws SQLException {
+    // Get notifications belonging to a user
+    public List<Notification> getNotificationsByUser(long userId)
+            throws SQLException {
+
         if (userId <= 0) {
             return Collections.emptyList();
         }
-        return notificationDAO.getNotificationsByUser(userId);
+
+        return notificationDAO.getNotificationsByUser(
+                userId
+        );
     }
 
-    // Method 5: Get Unread Notifications
-    public List<Notification> getUnreadNotifications(long userId) throws SQLException {
+    // Get unread notifications belonging to a user
+    public List<Notification> getUnreadNotifications(long userId)
+            throws SQLException {
+
         if (userId <= 0) {
             return Collections.emptyList();
         }
-        return notificationDAO.getUnreadNotifications(userId);
+
+        return notificationDAO.getUnreadNotifications(
+                userId
+        );
     }
 
-    // Method 6: Mark As Read
-    public boolean markAsRead(long id) throws SQLException {
-        if (id <= 0) {
+    // Mark one notification as read
+    // User ID is required to enforce ownership
+    public boolean markAsRead(
+            long notificationId,
+            long userId)
+            throws SQLException {
+
+        if (notificationId <= 0 || userId <= 0) {
             return false;
         }
-        return notificationDAO.markAsRead(id);
+
+        return notificationDAO.markAsRead(
+                notificationId,
+                userId
+        );
     }
 
-    // Method 7: Mark All As Read
-    public boolean markAllAsRead(long userId) throws SQLException {
+    // Mark all notifications of a user as read
+    public boolean markAllAsRead(long userId)
+            throws SQLException {
+
         if (userId <= 0) {
             return false;
         }
-        return notificationDAO.markAllAsRead(userId);
+
+        return notificationDAO.markAllAsRead(
+                userId
+        );
     }
 
-    // Method 8: Delete Notification
-    public boolean deleteNotification(long id) throws SQLException {
-        if (id <= 0) {
+    // Get unread notification count
+    public int getUnreadCount(long userId)
+            throws SQLException {
+
+        if (userId <= 0) {
+            return 0;
+        }
+
+        return notificationDAO.getUnreadCount(
+                userId
+        );
+    }
+
+    // Delete a notification
+    // User ID is required to enforce ownership
+    public boolean deleteNotification(
+            long notificationId,
+            long userId)
+            throws SQLException {
+
+        if (notificationId <= 0 || userId <= 0) {
             return false;
         }
-        return notificationDAO.deleteNotification(id);
+
+        return notificationDAO.deleteNotification(
+                notificationId,
+                userId
+        );
     }
 }
