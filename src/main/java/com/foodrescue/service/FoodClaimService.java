@@ -140,4 +140,28 @@ public class FoodClaimService {
         }
         return foodClaimDAO.getClaimsWithDetailsByProvider(providerId);
     }
+
+    // Method 11: Approve Claim
+    public boolean approveClaim(long claimId, long providerId) throws SQLException {
+        if (claimId <= 0 || providerId <= 0) {
+            return false;
+        }
+        return foodClaimDAO.approveClaim(claimId, providerId);
+    }
+
+    // Method 12: Reject Claim
+    public boolean rejectClaim(long claimId, long providerId) throws SQLException {
+        if (claimId <= 0 || providerId <= 0) {
+            return false;
+        }
+        return foodClaimDAO.rejectClaim(claimId, providerId);
+    }
+
+    // Method 13: Mark Claim Ready for Pickup
+    public boolean markClaimReadyForPickup(long claimId, long providerId) throws SQLException {
+        if (claimId <= 0 || providerId <= 0) {
+            return false;
+        }
+        return foodClaimDAO.markClaimReadyForPickup(claimId, providerId);
+    }
 }

@@ -313,14 +313,22 @@
             var btnApprove = document.createElement('button');
             btnApprove.className = 'btn btn-sm btn-success';
             btnApprove.textContent = 'Approve';
+            btnApprove.onclick = function() { handleClaimAction(claim.claimId, 'APPROVE'); };
 
             var btnReject = document.createElement('button');
             btnReject.className = 'btn btn-sm btn-danger';
             btnReject.textContent = 'Reject';
+            btnReject.onclick = function() { handleClaimAction(claim.claimId, 'REJECT'); };
 
             divActions.appendChild(btnApprove);
             divActions.appendChild(btnReject);
             tdActions.appendChild(divActions);
+          } else if (status === 'APPROVED') {
+            var btnReady = document.createElement('button');
+            btnReady.className = 'btn btn-sm btn-primary';
+            btnReady.textContent = 'Ready for Pickup';
+            btnReady.onclick = function() { handleClaimAction(claim.claimId, 'READY'); };
+            tdActions.appendChild(btnReady);
           } else {
             tdActions.textContent = '-';
           }
@@ -335,6 +343,46 @@
         console.error('Error fetching provider claims:', err);
       });
   }
+
+  window.handleClaimAction = function(claimId, action) {
+    if (!confirm('Are you sure you want to ' + action.toLowerCase() + ' this claim?')) {
+      return;
+    }
+    var formData = new URLSearchParams();
+    formData.append('claimId', claimId);
+    formData.append('action', action);
+
+    fetch('../provider/claim-action', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: formData.toString()
+    })
+    .then(function(response) {
+      if (!response.ok) {
+        throw new Error('Action failed');
+      }
+      return response.json();
+    })
+    .then(function(data) {
+      if (typeof showToast === 'function') {
+        showToast('Claim updated successfully!', 'success');
+      } else {
+        alert('Claim updated successfully!');
+      }
+      loadProviderClaims(); // Refresh claims list
+      fetchProviderListings(); // Refresh listings to update active count/status
+    })
+    .catch(function(err) {
+      console.error('Error updating claim:', err);
+      if (typeof showToast === 'function') {
+        showToast('Failed to update claim.', 'danger');
+      } else {
+        alert('Failed to update claim.');
+      }
+    });
+  };
 
   // ===== Fetch Provider Listings =====
   window.providerListingsData = [];

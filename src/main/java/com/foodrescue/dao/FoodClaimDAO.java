@@ -245,4 +245,79 @@ public class FoodClaimDAO {
 
         return list;
     }
+
+    // Provider Action: APPROVE (requires transaction)
+    public boolean approveClaim(long claimId, long providerId) throws SQLException {
+        String checkSql = "SELECT c.food_id, c.status FROM food_claims c JOIN food_listings f ON c.food_id = f.id WHERE c.id = ? AND f.provider_id = ? FOR UPDATE";
+        String updateClaimSql = "UPDATE food_claims SET status = 'APPROVED' WHERE id = ?";
+        String updateFoodSql = "UPDATE food_listings SET status = 'CLAIMED' WHERE id = ?";
+
+        try (Connection connection = DBConnection.getConnection()) {
+            connection.setAutoCommit(false);
+            try {
+                long foodId = -1;
+                try (PreparedStatement checkStmt = connection.prepareStatement(checkSql)) {
+                    checkStmt.setLong(1, claimId);
+                    checkStmt.setLong(2, providerId);
+                    try (ResultSet rs = checkStmt.executeQuery()) {
+                        if (rs.next()) {
+                            String status = rs.getString("status");
+                            if (!"PENDING".equals(status)) {
+                                connection.rollback();
+                                return false;
+                            }
+                            foodId = rs.getLong("food_id");
+                        } else {
+                            connection.rollback();
+                            return false;
+                        }
+                    }
+                }
+
+                try (PreparedStatement claimStmt = connection.prepareStatement(updateClaimSql)) {
+                    claimStmt.setLong(1, claimId);
+                    claimStmt.executeUpdate();
+                }
+
+                try (PreparedStatement foodStmt = connection.prepareStatement(updateFoodSql)) {
+                    foodStmt.setLong(1, foodId);
+                    foodStmt.executeUpdate();
+                }
+
+                connection.commit();
+                return true;
+            } catch (SQLException e) {
+                connection.rollback();
+                throw e;
+            } finally {
+                connection.setAutoCommit(true);
+            }
+        }
+    }
+
+    // Provider Action: REJECT
+    public boolean rejectClaim(long claimId, long providerId) throws SQLException {
+        String sql = "UPDATE food_claims c JOIN food_listings f ON c.food_id = f.id " +
+                     "SET c.status = 'REJECTED' " +
+                     "WHERE c.id = ? AND f.provider_id = ? AND c.status = 'PENDING'";
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setLong(1, claimId);
+            statement.setLong(2, providerId);
+            return statement.executeUpdate() > 0;
+        }
+    }
+
+    // Provider Action: READY_FOR_PICKUP
+    public boolean markClaimReadyForPickup(long claimId, long providerId) throws SQLException {
+        String sql = "UPDATE food_claims c JOIN food_listings f ON c.food_id = f.id " +
+                     "SET c.status = 'READY_FOR_PICKUP' " +
+                     "WHERE c.id = ? AND f.provider_id = ? AND c.status = 'APPROVED'";
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setLong(1, claimId);
+            statement.setLong(2, providerId);
+            return statement.executeUpdate() > 0;
+        }
+    }
 }
