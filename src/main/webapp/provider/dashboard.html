@@ -277,15 +277,35 @@
 
         <div class="dashboard-panel">
           <div class="dashboard-panel__body">
-            <form class="add-food-form" id="add-food-form">
+            <form class="add-food-form" id="add-food-form" method="POST" action="../add-food">
               <div class="form-group">
                 <label for="food-name" class="form-label">Food Name</label>
                 <input type="text" id="food-name" name="foodName" class="form-input" placeholder="e.g. Fresh Cooked Meals" required>
               </div>
+              <div class="form-group">
+                <label for="food-type" class="form-label">Food Type</label>
+                <select id="food-type" name="foodType" class="form-input" required>
+                  <option value="" disabled selected>Select food type</option>
+                  <option value="Cooked">Cooked Meal</option>
+                  <option value="Raw">Raw Ingredients</option>
+                  <option value="Packaged">Packaged Food</option>
+                  <option value="Baked">Baked Goods</option>
+                </select>
+              </div>
               <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
                 <div class="form-group">
                   <label for="food-quantity" class="form-label">Quantity</label>
-                  <input type="text" id="food-quantity" name="quantity" class="form-input" placeholder="e.g. 50 Meals" required>
+                  <input type="number" id="food-quantity" name="quantity" class="form-input" placeholder="e.g. 50" required>
+                </div>
+                <div class="form-group">
+                  <label for="food-unit" class="form-label">Unit</label>
+                  <input type="text" id="food-unit" name="unit" class="form-input" placeholder="e.g. Meals, Kgs" required>
+                </div>
+              </div>
+              <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                <div class="form-group">
+                  <label for="food-prepared" class="form-label">Prepared At</label>
+                  <input type="datetime-local" id="food-prepared" name="preparedAt" class="form-input" required>
                 </div>
                 <div class="form-group">
                   <label for="food-expiry" class="form-label">Expiry Time</label>
@@ -294,7 +314,7 @@
               </div>
               <div class="form-group">
                 <label for="food-description" class="form-label">Description</label>
-                <textarea id="food-description" name="description" class="form-input" rows="3" placeholder="Describe the food, packaging, and any dietary information." style="resize:vertical;"></textarea>
+                <textarea id="food-description" name="description" class="form-input" rows="3" placeholder="Describe the food, packaging, and any dietary information." style="resize:vertical;" required></textarea>
               </div>
               <div class="form-group">
                 <label for="food-pickup" class="form-label">Pickup Address</label>
@@ -417,34 +437,27 @@
         </div>
         <div class="dashboard-panel">
           <div class="dashboard-panel__body" style="padding:0;">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Food</th>
-                  <th>Claimed By</th>
-                  <th>Quantity</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- TODO: Replace mock data with backend response -->
-                <tr>
-                  <td><div class="data-table__food-name">Chicken Biryani</div></td>
-                  <td>Hope Foundation NGO</td>
-                  <td>30 Servings</td>
-                  <td><span class="badge badge-warning">Pending Pickup</span></td>
-                  <td><button class="btn btn-sm btn-secondary">View Details</button></td>
-                </tr>
-                <tr>
-                  <td><div class="data-table__food-name">Rice &amp; Dal</div></td>
-                  <td>Community Care Trust</td>
-                  <td>40 Meals</td>
-                  <td><span class="badge badge-success">Picked Up</span></td>
-                  <td><button class="btn btn-sm btn-secondary">View Details</button></td>
-                </tr>
-              </tbody>
-            </table>
+            <div id="claims-loading" class="hidden" style="text-align:center;padding:2rem;">Loading claims...</div>
+            <div id="claims-error" class="hidden" style="text-align:center;padding:2rem;color:var(--color-danger);">Error loading claims.</div>
+            <div id="claims-empty" class="hidden" style="text-align:center;padding:2rem;">No claims available</div>
+            <div class="table-responsive hidden" id="claims-table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Claim ID</th>
+                    <th>Food Name</th>
+                    <th>NGO Name</th>
+                    <th>Claimed Quantity</th>
+                    <th>Unit</th>
+                    <th>Claim Status</th>
+                    <th>Claimed Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="claims-table-body">
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
