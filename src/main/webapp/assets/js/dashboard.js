@@ -145,6 +145,12 @@
   var addFoodForm = document.getElementById('add-food-form');
   if (addFoodForm) {
     addFoodForm.addEventListener('submit', function (e) {
+      if (!addFoodForm.checkValidity()) {
+        e.preventDefault();
+        addFoodForm.reportValidity();
+        return;
+      }
+
       // Allow real form submission, just disable button to prevent double submit
       var submitBtn = addFoodForm.querySelector('button[type="submit"]');
       if (submitBtn) {
@@ -329,5 +335,240 @@
         console.error('Error fetching provider claims:', err);
       });
   }
+
+  // ===== Fetch Provider Listings =====
+  window.providerListingsData = [];
+
+  function fetchProviderListings() {
+    var recentTbody = document.getElementById('recent-listings-tbody');
+    var allTbody = document.getElementById('all-listings-tbody');
+    var activeCountBadge = document.getElementById('active-listings-count');
+
+    if (!recentTbody && !allTbody && !activeCountBadge) return;
+
+    fetch('../provider/listings')
+      .then(function(response) {
+        if (!response.ok) throw new Error('Network error');
+        return response.json();
+      })
+      .then(function(data) {
+        window.providerListingsData = data;
+        var activeListings = data.filter(function(l) { return l.status === 'AVAILABLE'; });
+        if (activeCountBadge) {
+          activeCountBadge.textContent = activeListings.length;
+        }
+
+        if (recentTbody) {
+          var recentRows = '';
+          if (data.length === 0) {
+            recentRows = '<tr><td colspan="5" style="text-align:center;padding:2rem;">No food listings yet.</td></tr>';
+          } else {
+            data.slice(0, 3).forEach(function(listing) {
+              var statusClass = listing.status === 'AVAILABLE' ? 'badge-success' : (listing.status === 'CLAIMED' ? 'badge-info' : 'badge-neutral');
+              var actionHtml = '';
+              if (listing.status === 'AVAILABLE') {
+                actionHtml += '<div style="display:flex;gap:0.5rem;">';
+                actionHtml += '  <button class="btn btn-sm btn-secondary" onclick="editListing(' + listing.id + ')">Edit</button>';
+                actionHtml += '</div>';
+              } else {
+                actionHtml += '<button class="btn btn-sm btn-secondary">Details</button>';
+              }
+              
+              recentRows += '<tr>';
+              recentRows += '  <td>';
+              recentRows += '    <div class="data-table__food-info">';
+              recentRows += '      <div style="font-size:1.5rem;margin-right:1rem;">🍱</div>';
+              recentRows += '      <div>';
+              recentRows += '        <div class="data-table__food-name">' + listing.foodName + '</div>';
+              recentRows += '        <div class="data-table__food-provider">Added ' + (listing.createdAt || 'recently') + '</div>';
+              recentRows += '      </div>';
+              recentRows += '    </div>';
+              recentRows += '  </td>';
+              recentRows += '  <td>' + listing.quantity + ' ' + listing.unit + '</td>';
+              recentRows += '  <td>' + listing.expiryTime + '</td>';
+              recentRows += '  <td><span class="badge ' + statusClass + '">' + listing.status + '</span></td>';
+              recentRows += '  <td>' + actionHtml + '</td>';
+              recentRows += '</tr>';
+            });
+          }
+          recentTbody.innerHTML = recentRows;
+        }
+
+        if (allTbody) {
+          var allRows = '';
+          if (data.length === 0) {
+            allRows = '<tr><td colspan="6" style="text-align:center;padding:2rem;">No food listings yet.</td></tr>';
+          } else {
+            data.forEach(function(listing) {
+              var statusClass = listing.status === 'AVAILABLE' ? 'badge-success' : (listing.status === 'CLAIMED' ? 'badge-info' : 'badge-neutral');
+              var actionHtml = '';
+              if (listing.status === 'AVAILABLE') {
+                actionHtml += '<div style="display:flex;gap:0.5rem;">';
+                actionHtml += '  <button class="btn btn-sm btn-secondary" onclick="editListing(' + listing.id + ')">Edit</button>';
+                actionHtml += '  <form action="../provider/cancel-food" method="POST" style="margin:0;" onsubmit="return confirm(\'Are you sure you want to cancel this listing?\');">';
+                actionHtml += '    <input type="hidden" name="id" value="' + listing.id + '">';
+                actionHtml += '    <button type="submit" class="btn btn-sm btn-danger">Cancel</button>';
+                actionHtml += '  </form>';
+                actionHtml += '</div>';
+              } else {
+                actionHtml += '<button class="btn btn-sm btn-secondary">Details</button>';
+              }
+
+              allRows += '<tr>';
+              allRows += '  <td>';
+              allRows += '    <div class="data-table__food-info">';
+              allRows += '      <div style="font-size:1.5rem;margin-right:1rem;">🍱</div>';
+              allRows += '      <div>';
+              allRows += '        <div class="data-table__food-name">' + listing.foodName + '</div>';
+              allRows += '      </div>';
+              allRows += '    </div>';
+              allRows += '  </td>';
+              allRows += '  <td>' + listing.quantity + ' ' + listing.unit + '</td>';
+              allRows += '  <td>' + (listing.createdAt || 'N/A') + '</td>';
+              allRows += '  <td>' + listing.expiryTime + '</td>';
+              allRows += '  <td><span class="badge ' + statusClass + '">' + listing.status + '</span></td>';
+              allRows += '  <td>' + actionHtml + '</td>';
+              allRows += '</tr>';
+            });
+          }
+          allTbody.innerHTML = allRows;
+        }
+      })
+      .catch(function(error) {
+        console.error('Error fetching listings:', error);
+        if (recentTbody) recentTbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Failed to load listings.</td></tr>';
+        if (allTbody) allTbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Failed to load listings.</td></tr>';
+      });
+  }
+
+  window.editListing = function(id) {
+    if (!window.providerListingsData) return;
+    var listing = window.providerListingsData.find(function(l) { return l.id === id; });
+    if (!listing) return;
+    
+    document.getElementById('edit-id').value = listing.id;
+    document.getElementById('edit-food-name').value = listing.foodName || '';
+    document.getElementById('edit-food-type').value = listing.foodType || '';
+    document.getElementById('edit-food-quantity').value = listing.quantity || '';
+    document.getElementById('edit-food-unit').value = listing.unit || '';
+    
+    if (listing.preparedAt) {
+      document.getElementById('edit-food-prepared').value = listing.preparedAt.replace(' ', 'T');
+    } else {
+      document.getElementById('edit-food-prepared').value = '';
+    }
+    if (listing.expiryTime) {
+      document.getElementById('edit-food-expiry').value = listing.expiryTime.replace(' ', 'T');
+    } else {
+      document.getElementById('edit-food-expiry').value = '';
+    }
+    
+    document.getElementById('edit-food-pickup').value = listing.pickupAddress || '';
+    document.getElementById('edit-food-description').value = listing.description || '';
+    
+    showPage('edit-food');
+  };
+
+  // ===== Fetch NGO Available Food =====
+  function fetchNGOAvailableFood() {
+    var recentAvailableTbody = document.getElementById('ngo-recent-available-tbody');
+    var allAvailableTbody = document.getElementById('ngo-all-available-tbody');
+
+    if (!recentAvailableTbody && !allAvailableTbody) return;
+
+    fetch('../ngo/available-food')
+      .then(function(response) {
+        if (!response.ok) throw new Error('Network error');
+        return response.json();
+      })
+      .then(function(data) {
+        var renderRows = function(listings) {
+          var html = '';
+          if (listings.length === 0) {
+            html = '<tr><td colspan="6" style="text-align:center;padding:2rem;">No available food found.</td></tr>';
+          } else {
+            listings.forEach(function(listing) {
+              html += '<tr>';
+              html += '  <td>';
+              html += '    <div class="data-table__food-info">';
+              html += '      <div style="font-size:1.5rem;margin-right:1rem;">🍛</div>';
+              html += '      <div>';
+              html += '        <div class="data-table__food-name">' + listing.foodName + '</div>';
+              html += '        <div class="data-table__food-provider">Added ' + (listing.createdAt || 'recently') + '</div>';
+              html += '      </div>';
+              html += '    </div>';
+              html += '  </td>';
+              html += '  <td>Provider #' + listing.providerId + '</td>';
+              html += '  <td>' + listing.quantity + ' ' + listing.unit + '</td>';
+              html += '  <td>' + listing.pickupAddress + '</td>';
+              html += '  <td><span class="badge badge-warning">' + listing.expiryTime + '</span></td>';
+              html += '  <td><button class="btn btn-sm btn-primary" onclick="claimFood(' + listing.id + ', ' + listing.quantity + ')">Claim Food</button></td>';
+              html += '</tr>';
+            });
+          }
+          return html;
+        };
+
+        if (recentAvailableTbody) {
+          recentAvailableTbody.innerHTML = renderRows(data.slice(0, 3));
+        }
+        if (allAvailableTbody) {
+          allAvailableTbody.innerHTML = renderRows(data);
+        }
+      })
+      .catch(function(error) {
+        console.error('Error fetching available food:', error);
+        var errHtml = '<tr><td colspan="6" style="text-align:center;">Failed to load available food.</td></tr>';
+        if (recentAvailableTbody) recentAvailableTbody.innerHTML = errHtml;
+        if (allAvailableTbody) allAvailableTbody.innerHTML = errHtml;
+      });
+  }
+
+  window.claimFood = function(foodId, maxQuantity) {
+    var quantity = prompt('Enter quantity to claim (Max: ' + maxQuantity + '):', maxQuantity);
+    if (!quantity) return;
+    
+    var qNum = parseInt(quantity, 10);
+    if (isNaN(qNum) || qNum <= 0 || qNum > maxQuantity) {
+      alert('Invalid quantity. Must be between 1 and ' + maxQuantity);
+      return;
+    }
+
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '../ngo/claim-food';
+    form.style.display = 'none';
+
+    var foodIdInput = document.createElement('input');
+    foodIdInput.type = 'hidden';
+    foodIdInput.name = 'foodId';
+    foodIdInput.value = foodId;
+
+    var qtyInput = document.createElement('input');
+    qtyInput.type = 'hidden';
+    qtyInput.name = 'claimedQuantity';
+    qtyInput.value = qNum;
+
+    form.appendChild(foodIdInput);
+    form.appendChild(qtyInput);
+    document.body.appendChild(form);
+    form.submit();
+  };
+
+  document.addEventListener('DOMContentLoaded', function() {
+    fetchProviderListings();
+    fetchNGOAvailableFood();
+
+    // Show success toast after claim redirect
+    var urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('claimSuccess') === 'true') {
+      // Clean URL without reloading
+      window.history.replaceState({}, document.title, window.location.pathname);
+      showPage('available');
+      if (typeof showToast === 'function') {
+        showToast('Food claimed successfully! Status: PENDING', 'success');
+      }
+    }
+  });
 
 })();

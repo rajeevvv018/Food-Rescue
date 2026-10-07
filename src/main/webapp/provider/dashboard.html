@@ -168,7 +168,7 @@
               <div class="stat-card__trend stat-card__trend--up">↑ 12%</div>
             </div>
             <!-- TODO: Replace mock data with backend response -->
-            <div class="stat-card__value">8</div>
+            <div class="stat-card__value" id="active-listings-count">0</div>
             <div class="stat-card__label">Active Listings</div>
           </div>
           <div class="stat-card">
@@ -212,53 +212,8 @@
                   <th>Actions</th>
                 </tr>
               </thead>
-              <tbody>
-                <!-- TODO: Replace mock data with backend response -->
-                <tr>
-                  <td>
-                    <div class="data-table__food-info">
-                      <img src="../assets/images/food/meals.jpg" alt="Meals" class="data-table__food-img">
-                      <div>
-                        <div class="data-table__food-name">Fresh Cooked Meals</div>
-                        <div class="data-table__food-provider">Added 2h ago</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td>50 Meals</td>
-                  <td>Today, 7:30 PM</td>
-                  <td><span class="badge badge-success">Available</span></td>
-                  <td><button class="btn btn-sm btn-secondary">Edit</button></td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="data-table__food-info">
-                      <img src="../assets/images/food/biryani.jpg" alt="Biryani" class="data-table__food-img">
-                      <div>
-                        <div class="data-table__food-name">Chicken Biryani</div>
-                        <div class="data-table__food-provider">Added 5h ago</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td>30 Servings</td>
-                  <td>Today, 6:00 PM</td>
-                  <td><span class="badge badge-info">Claimed</span></td>
-                  <td><button class="btn btn-sm btn-secondary">View Claim</button></td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="data-table__food-info">
-                      <img src="../assets/images/food/bread.jpg" alt="Bread" class="data-table__food-img">
-                      <div>
-                        <div class="data-table__food-name">Fresh Baked Bread</div>
-                        <div class="data-table__food-provider">Added 1 day ago</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td>100 Loaves</td>
-                  <td>Yesterday</td>
-                  <td><span class="badge badge-neutral">Completed</span></td>
-                  <td><button class="btn btn-sm btn-secondary">Details</button></td>
-                </tr>
+              <tbody id="recent-listings-tbody">
+                <!-- Data will be loaded dynamically via JavaScript -->
               </tbody>
             </table>
           </div>
@@ -295,11 +250,11 @@
               <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
                 <div class="form-group">
                   <label for="food-quantity" class="form-label">Quantity</label>
-                  <input type="number" id="food-quantity" name="quantity" class="form-input" placeholder="e.g. 50" required>
+                  <input type="number" id="food-quantity" name="quantity" class="form-input" min="1" placeholder="e.g. 50" required>
                 </div>
                 <div class="form-group">
                   <label for="food-unit" class="form-label">Unit</label>
-                  <input type="text" id="food-unit" name="unit" class="form-input" placeholder="e.g. Meals, Kgs" required>
+                  <input type="text" id="food-unit" name="unit" class="form-input" placeholder="e.g. Meals, kg, packets" required>
                 </div>
               </div>
               <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
@@ -313,20 +268,76 @@
                 </div>
               </div>
               <div class="form-group">
-                <label for="food-description" class="form-label">Description</label>
-                <textarea id="food-description" name="description" class="form-input" rows="3" placeholder="Describe the food, packaging, and any dietary information." style="resize:vertical;" required></textarea>
-              </div>
-              <div class="form-group">
                 <label for="food-pickup" class="form-label">Pickup Address</label>
                 <input type="text" id="food-pickup" name="pickupAddress" class="form-input" placeholder="Full pickup address" required>
               </div>
               <div class="form-group">
-                <label for="food-image" class="form-label">Food Image (Optional)</label>
-                <input type="file" id="food-image" name="image" class="form-input" accept="image/*" style="padding:0.5rem;">
+                <label for="food-description" class="form-label">Description</label>
+                <textarea id="food-description" name="description" class="form-input" rows="3" placeholder="Describe the food, packaging, and any dietary information." style="resize:vertical;" required></textarea>
               </div>
               <div style="display:flex;gap:1rem;margin-top:1.5rem;">
                 <button type="submit" class="btn btn-primary">Publish Listing</button>
                 <button type="button" class="btn btn-secondary" onclick="showPage('dashboard')">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit Food Page -->
+      <div id="page-edit-food" class="hidden">
+        <div class="dashboard__header">
+          <div>
+            <h1 class="dashboard__title">Edit Food Listing</h1>
+            <p class="dashboard__subtitle">Update your existing food listing details.</p>
+          </div>
+        </div>
+
+        <div class="dashboard-panel">
+          <div class="dashboard-panel__body">
+            <form class="edit-food-form" id="edit-food-form" action="../provider/edit-food" method="POST">
+              <input type="hidden" id="edit-id" name="id">
+              <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                <div class="form-group">
+                  <label for="edit-food-name" class="form-label">Food Name</label>
+                  <input type="text" id="edit-food-name" name="foodName" class="form-input" required>
+                </div>
+                <div class="form-group">
+                  <label for="edit-food-type" class="form-label">Food Type</label>
+                  <input type="text" id="edit-food-type" name="foodType" class="form-input" required>
+                </div>
+              </div>
+              <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                <div class="form-group">
+                  <label for="edit-food-quantity" class="form-label">Quantity</label>
+                  <input type="number" id="edit-food-quantity" name="quantity" class="form-input" min="1" required>
+                </div>
+                <div class="form-group">
+                  <label for="edit-food-unit" class="form-label">Unit</label>
+                  <input type="text" id="edit-food-unit" name="unit" class="form-input" required>
+                </div>
+              </div>
+              <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                <div class="form-group">
+                  <label for="edit-food-prepared" class="form-label">Prepared At</label>
+                  <input type="datetime-local" id="edit-food-prepared" name="preparedAt" class="form-input" required>
+                </div>
+                <div class="form-group">
+                  <label for="edit-food-expiry" class="form-label">Expiry Time</label>
+                  <input type="datetime-local" id="edit-food-expiry" name="expiryTime" class="form-input" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="edit-food-pickup" class="form-label">Pickup Address</label>
+                <input type="text" id="edit-food-pickup" name="pickupAddress" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label for="edit-food-description" class="form-label">Description</label>
+                <textarea id="edit-food-description" name="description" class="form-input" rows="3" style="resize:vertical;"></textarea>
+              </div>
+              <div style="display:flex;gap:1rem;margin-top:1.5rem;">
+                <button type="submit" class="btn btn-primary">Update Listing</button>
+                <button type="button" class="btn btn-secondary" onclick="showPage('listings')">Cancel</button>
               </div>
             </form>
           </div>
@@ -357,69 +368,8 @@
                   <th>Actions</th>
                 </tr>
               </thead>
-              <tbody>
-                <!-- TODO: Replace mock data with backend response -->
-                <tr>
-                  <td>
-                    <div class="data-table__food-info">
-                      <img src="../assets/images/food/meals.jpg" alt="Meals" class="data-table__food-img">
-                      <div>
-                        <div class="data-table__food-name">Fresh Cooked Meals</div>
-                        <div class="data-table__food-provider">ABC Restaurant</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td>50 Meals</td>
-                  <td>Today</td>
-                  <td>7:30 PM</td>
-                  <td><span class="badge badge-success">Available</span></td>
-                  <td>
-                    <div style="display:flex;gap:0.5rem;">
-                      <button class="btn btn-sm btn-secondary">Edit</button>
-                      <button class="btn btn-sm btn-danger">Cancel</button>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="data-table__food-info">
-                      <img src="../assets/images/food/biryani.jpg" alt="Biryani" class="data-table__food-img">
-                      <div>
-                        <div class="data-table__food-name">Chicken Biryani</div>
-                        <div class="data-table__food-provider">ABC Restaurant</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td>30 Servings</td>
-                  <td>Today</td>
-                  <td>6:00 PM</td>
-                  <td><span class="badge badge-info">Claimed</span></td>
-                  <td>
-                    <div style="display:flex;gap:0.5rem;">
-                      <button class="btn btn-sm btn-secondary">View Claim</button>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="data-table__food-info">
-                      <img src="../assets/images/food/bread.jpg" alt="Bread" class="data-table__food-img">
-                      <div>
-                        <div class="data-table__food-name">Fresh Baked Bread</div>
-                        <div class="data-table__food-provider">ABC Restaurant</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td>100 Loaves</td>
-                  <td>Yesterday</td>
-                  <td>Expired</td>
-                  <td><span class="badge badge-neutral">Completed</span></td>
-                  <td>
-                    <div style="display:flex;gap:0.5rem;">
-                      <button class="btn btn-sm btn-secondary">Details</button>
-                    </div>
-                  </td>
-                </tr>
+              <tbody id="all-listings-tbody">
+                <!-- Data will be loaded dynamically via JavaScript -->
               </tbody>
             </table>
           </div>

@@ -175,34 +175,8 @@
                   <th>Action</th>
                 </tr>
               </thead>
-              <tbody>
-                <!-- TODO: Replace mock data with backend response -->
-                <tr>
-                  <td>
-                    <div class="data-table__food-info">
-                      <img src="../assets/images/food/meals.jpg" alt="Meals" class="data-table__food-img">
-                      <div><div class="data-table__food-name">Fresh Cooked Meals</div></div>
-                    </div>
-                  </td>
-                  <td>ABC Restaurant</td>
-                  <td>50 Meals</td>
-                  <td>MI Road, Jaipur</td>
-                  <td>7:30 PM</td>
-                  <td><button class="btn btn-sm btn-primary">Claim Food</button></td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="data-table__food-info">
-                      <img src="../assets/images/food/bread.jpg" alt="Bread" class="data-table__food-img">
-                      <div><div class="data-table__food-name">Fresh Baked Bread</div></div>
-                    </div>
-                  </td>
-                  <td>City Bakery</td>
-                  <td>100 Loaves</td>
-                  <td>Andheri, Mumbai</td>
-                  <td>9:00 PM</td>
-                  <td><button class="btn btn-sm btn-primary">Claim Food</button></td>
-                </tr>
+              <tbody id="ngo-recent-available-tbody">
+                <!-- Loaded dynamically via JS -->
               </tbody>
             </table>
           </div>
@@ -231,47 +205,8 @@
                   <th>Action</th>
                 </tr>
               </thead>
-              <tbody>
-                <!-- TODO: Replace mock data with backend response -->
-                <tr>
-                  <td>
-                    <div class="data-table__food-info">
-                      <img src="../assets/images/food/meals.jpg" alt="" class="data-table__food-img">
-                      <div><div class="data-table__food-name">Fresh Cooked Meals</div><div class="data-table__food-provider">Listed 2h ago</div></div>
-                    </div>
-                  </td>
-                  <td>ABC Restaurant</td>
-                  <td>50 Meals</td>
-                  <td>MI Road, Jaipur</td>
-                  <td><span class="badge badge-warning">7:30 PM</span></td>
-                  <td><button class="btn btn-sm btn-primary">Claim Food</button></td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="data-table__food-info">
-                      <img src="../assets/images/food/biryani.jpg" alt="" class="data-table__food-img">
-                      <div><div class="data-table__food-name">Chicken Biryani</div><div class="data-table__food-provider">Listed 5h ago</div></div>
-                    </div>
-                  </td>
-                  <td>Royal Kitchen</td>
-                  <td>30 Servings</td>
-                  <td>Connaught Place, Delhi</td>
-                  <td><span class="badge badge-danger">6:00 PM</span></td>
-                  <td><button class="btn btn-sm btn-primary">Claim Food</button></td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="data-table__food-info">
-                      <img src="../assets/images/food/bread.jpg" alt="" class="data-table__food-img">
-                      <div><div class="data-table__food-name">Fresh Baked Bread</div><div class="data-table__food-provider">Listed 3h ago</div></div>
-                    </div>
-                  </td>
-                  <td>City Bakery</td>
-                  <td>100 Loaves</td>
-                  <td>Andheri, Mumbai</td>
-                  <td><span class="badge badge-success">9:00 PM</span></td>
-                  <td><button class="btn btn-sm btn-primary">Claim Food</button></td>
-                </tr>
+              <tbody id="ngo-all-available-tbody">
+                <!-- Loaded dynamically via JS -->
               </tbody>
             </table>
           </div>

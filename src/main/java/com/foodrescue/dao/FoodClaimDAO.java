@@ -1,6 +1,7 @@
 package com.foodrescue.dao;
 
 import com.foodrescue.model.FoodClaim;
+import com.foodrescue.model.FoodClaimDTO;
 import com.foodrescue.util.DBConnection;
 
 import java.sql.*;
@@ -142,5 +143,106 @@ public class FoodClaimDAO {
         foodClaim.setClaimedAt(rs.getTimestamp("claimed_at"));
         foodClaim.setUpdatedAt(rs.getTimestamp("updated_at"));
         return foodClaim;
+    }
+
+    // SELECT food claims with details by NGO ID using a single JOIN query
+    public List<FoodClaimDTO> getClaimsWithDetailsByNgo(long ngoId) throws SQLException {
+        List<FoodClaimDTO> list = new ArrayList<>();
+        String sql = "SELECT " +
+                "c.id AS claim_id, " +
+                "c.food_id, " +
+                "f.food_name, " +
+                "c.claimed_quantity, " +
+                "f.unit, " +
+                "f.pickup_address, " +
+                "u.name AS provider_name, " +
+                "c.status AS claim_status, " +
+                "c.claimed_at, " +
+                "c.updated_at " +
+                "FROM food_claims c " +
+                "JOIN food_listings f ON c.food_id = f.id " +
+                "LEFT JOIN users u ON f.provider_id = u.id " +
+                "WHERE c.ngo_id = ? " +
+                "ORDER BY c.id DESC";
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setLong(1, ngoId);
+
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSetToFoodClaimDTO(rs));
+                }
+            }
+        }
+
+        return list;
+    }
+
+    // Helper method to map ResultSet to FoodClaimDTO object
+    private FoodClaimDTO mapResultSetToFoodClaimDTO(ResultSet rs) throws SQLException {
+        FoodClaimDTO dto = new FoodClaimDTO();
+        dto.setClaimId(rs.getLong("claim_id"));
+        dto.setFoodId(rs.getLong("food_id"));
+        dto.setFoodName(rs.getString("food_name"));
+        dto.setClaimedQuantity(rs.getInt("claimed_quantity"));
+        dto.setUnit(rs.getString("unit"));
+        dto.setPickupAddress(rs.getString("pickup_address"));
+        dto.setProviderName(rs.getString("provider_name"));
+        dto.setStatus(rs.getString("claim_status"));
+        dto.setClaimedAt(rs.getTimestamp("claimed_at"));
+        dto.setUpdatedAt(rs.getTimestamp("updated_at"));
+        return dto;
+    }
+
+    // SELECT food claims with details by Provider ID using a single JOIN query
+    public List<FoodClaimDTO> getClaimsWithDetailsByProvider(long providerId) throws SQLException {
+        List<FoodClaimDTO> list = new ArrayList<>();
+        String sql = "SELECT " +
+                "c.id AS claim_id, " +
+                "c.food_id, " +
+                "f.food_name, " +
+                "c.claimed_quantity, " +
+                "f.unit, " +
+                "f.pickup_address, " +
+                "u.name AS ngo_name, " +
+                "u.phone AS ngo_phone, " +
+                "u.email AS ngo_email, " +
+                "c.status AS claim_status, " +
+                "c.claimed_at, " +
+                "c.updated_at " +
+                "FROM food_claims c " +
+                "JOIN food_listings f ON c.food_id = f.id " +
+                "JOIN users u ON c.ngo_id = u.id " +
+                "WHERE f.provider_id = ? " +
+                "ORDER BY c.id DESC";
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setLong(1, providerId);
+
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    FoodClaimDTO dto = new FoodClaimDTO();
+                    dto.setClaimId(rs.getLong("claim_id"));
+                    dto.setFoodId(rs.getLong("food_id"));
+                    dto.setFoodName(rs.getString("food_name"));
+                    dto.setClaimedQuantity(rs.getInt("claimed_quantity"));
+                    dto.setUnit(rs.getString("unit"));
+                    dto.setPickupAddress(rs.getString("pickup_address"));
+                    dto.setNgoName(rs.getString("ngo_name"));
+                    dto.setNgoPhone(rs.getString("ngo_phone"));
+                    dto.setNgoEmail(rs.getString("ngo_email"));
+                    dto.setStatus(rs.getString("claim_status"));
+                    dto.setClaimedAt(rs.getTimestamp("claimed_at"));
+                    dto.setUpdatedAt(rs.getTimestamp("updated_at"));
+                    list.add(dto);
+                }
+            }
+        }
+
+        return list;
     }
 }

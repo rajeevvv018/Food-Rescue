@@ -54,46 +54,31 @@
 
 
   // ===== Register Form =====
-  var registerForm = document.getElementById('register-form');
-  if (registerForm) {
-    registerForm.addEventListener('submit', function (e) {
-      e.preventDefault();
+  document.addEventListener("DOMContentLoaded", function () {
+    const registerForm = document.getElementById("register-form");
 
-      var name = document.getElementById('reg-name').value.trim();
-      var email = document.getElementById('reg-email').value.trim();
-      var password = document.getElementById('reg-password').value;
-      var phone = document.getElementById('reg-phone').value.trim();
-      var role = document.getElementById('reg-role').value;
-      var address = document.getElementById('reg-address').value.trim();
-      var terms = document.getElementById('terms').checked;
-      var alertBox = document.getElementById('register-alert');
-      var alertText = document.getElementById('register-alert-text');
-      var submitBtn = document.getElementById('register-submit');
+    if (registerForm) {
+      registerForm.addEventListener("submit", function (event) {
+        if (!registerForm.checkValidity()) {
+          event.preventDefault();
+          registerForm.reportValidity();
+          return;
+        }
 
-      // Validation
-      if (!name || !email || !password || !phone || !role || !address) {
-        showAlert(alertBox, alertText, 'Please fill in all fields.');
-        return;
-      }
+        const submitButton = document.getElementById("register-submit");
 
-      if (password.length < 8) {
-        showAlert(alertBox, alertText, 'Password must be at least 8 characters.');
-        return;
-      }
+        if (submitButton) {
+          submitButton.disabled = true;
+          submitButton.textContent = "Creating account...";
+        }
 
-      if (!terms) {
-        showAlert(alertBox, alertText, 'Please agree to the Terms of Service.');
-        return;
-      }
-
-      // Simulate loading state before submission
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Creating account...';
-
-      // Let the form submit natively to the Servlet endpoint
-      registerForm.submit();
-    });
-  }
+        // IMPORTANT:
+        // Do NOT call event.preventDefault() here.
+        // Browser will naturally POST to:
+        // /FoodRescue/register
+      });
+    }
+  });
 
 
   // ===== Helper: Show Alert =====

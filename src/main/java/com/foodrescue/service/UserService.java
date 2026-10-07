@@ -54,6 +54,36 @@ public class UserService {
         return userDAO.registerUser(user);
     }
 
+    // Method 2: Login User
+    public User loginUser(String email, String password) throws SQLException {
+
+        if (email == null || email.trim().isEmpty()) {
+            return null;
+        }
+
+        if (password == null || password.isEmpty()) {
+            return null;
+        }
+
+        User user = userDAO.getUserByEmail(email.trim().toLowerCase());
+
+        if (user == null) {
+            return null;
+        }
+
+        boolean passwordMatched =
+                PasswordUtil.verifyPassword(
+                        password,
+                        user.getPassword()
+                );
+
+        if (!passwordMatched) {
+            return null;
+        }
+
+        return user;
+    }
+
     // Method 2: Get User By Email
     public User getUserByEmail(String email) throws SQLException {
 

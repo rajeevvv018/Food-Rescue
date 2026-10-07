@@ -3,6 +3,7 @@ package com.foodrescue.service;
 import com.foodrescue.dao.FoodClaimDAO;
 import com.foodrescue.dao.FoodListingDAO;
 import com.foodrescue.model.FoodClaim;
+import com.foodrescue.model.FoodClaimDTO;
 import com.foodrescue.model.FoodListing;
 
 import java.sql.SQLException;
@@ -122,5 +123,21 @@ public class FoodClaimService {
             return false;
         }
         return foodClaimDAO.deleteFoodClaim(id);
+    }
+
+    // Method 9: Get Claims with Details by NGO
+    public List<FoodClaimDTO> getClaimsWithDetailsByNgo(long ngoId) throws SQLException {
+        if (ngoId <= 0) {
+            return Collections.emptyList();
+        }
+        return foodClaimDAO.getClaimsWithDetailsByNgo(ngoId);
+    }
+
+    // Method 10: Get Claims with Details by Provider
+    public List<FoodClaimDTO> getClaimsWithDetailsByProvider(long providerId) throws SQLException {
+        if (providerId <= 0) {
+            return Collections.emptyList();
+        }
+        return foodClaimDAO.getClaimsWithDetailsByProvider(providerId);
     }
 }
