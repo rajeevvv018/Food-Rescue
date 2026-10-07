@@ -164,4 +164,9 @@ public class FoodClaimService {
         }
         return foodClaimDAO.markClaimReadyForPickup(claimId, providerId);
     }
+
+    // Method 14: Get Available Pickups
+    public List<com.foodrescue.model.FoodClaimDTO> getAvailablePickups() throws SQLException {
+        return foodClaimDAO.getAvailablePickups();
+    }
 }

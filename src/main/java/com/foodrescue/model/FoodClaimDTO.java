@@ -16,6 +16,7 @@ public class FoodClaimDTO {
     private String status;
     private Timestamp claimedAt;
     private Timestamp updatedAt;
+    private Timestamp expiryTime;
 
     public FoodClaimDTO() {
     }
@@ -156,6 +157,14 @@ public class FoodClaimDTO {
 
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Timestamp getExpiryTime() {
+        return expiryTime;
+    }
+
+    public void setExpiryTime(Timestamp expiryTime) {
+        this.expiryTime = expiryTime;
     }
 
     @Override

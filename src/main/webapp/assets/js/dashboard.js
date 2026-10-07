@@ -421,7 +421,7 @@
               } else {
                 actionHtml += '<button class="btn btn-sm btn-secondary">Details</button>';
               }
-              
+
               recentRows += '<tr>';
               recentRows += '  <td>';
               recentRows += '    <div class="data-table__food-info">';
@@ -493,13 +493,13 @@
     if (!window.providerListingsData) return;
     var listing = window.providerListingsData.find(function(l) { return l.id === id; });
     if (!listing) return;
-    
+
     document.getElementById('edit-id').value = listing.id;
     document.getElementById('edit-food-name').value = listing.foodName || '';
     document.getElementById('edit-food-type').value = listing.foodType || '';
     document.getElementById('edit-food-quantity').value = listing.quantity || '';
     document.getElementById('edit-food-unit').value = listing.unit || '';
-    
+
     if (listing.preparedAt) {
       document.getElementById('edit-food-prepared').value = listing.preparedAt.replace(' ', 'T');
     } else {
@@ -510,10 +510,10 @@
     } else {
       document.getElementById('edit-food-expiry').value = '';
     }
-    
+
     document.getElementById('edit-food-pickup').value = listing.pickupAddress || '';
     document.getElementById('edit-food-description').value = listing.description || '';
-    
+
     showPage('edit-food');
   };
 
@@ -575,7 +575,7 @@
   window.claimFood = function(foodId, maxQuantity) {
     var quantity = prompt('Enter quantity to claim (Max: ' + maxQuantity + '):', maxQuantity);
     if (!quantity) return;
-    
+
     var qNum = parseInt(quantity, 10);
     if (isNaN(qNum) || qNum <= 0 || qNum > maxQuantity) {
       alert('Invalid quantity. Must be between 1 and ' + maxQuantity);
@@ -602,10 +602,207 @@
     document.body.appendChild(form);
     form.submit();
   };
+  // ===== Volunteer Dashboard Integration =====
+  window.fetchVolunteerAvailablePickups = function() {
+    var container = document.querySelector('#page-available .dashboard-panel__body');
+    if (!container) return; // Not on volunteer dashboard
+
+    fetch('../volunteer/available-pickups')
+      .then(function(res) {
+        if (!res.ok) throw new Error('Network error');
+        return res.json();
+      })
+      .then(function(data) {
+        var html = '';
+        if (!data || data.length === 0) {
+          html = '<div style="padding:2rem;text-align:center;">No available pickups at this moment.</div>';
+        } else {
+          data.forEach(function(item) {
+            html += '<div class="pickup-card">';
+            html += '  <div class="pickup-card__header">';
+            html += '    <h4 class="pickup-card__title">' + item.foodName + ' &mdash; ' + item.claimedQuantity + ' ' + item.unit + '</h4>';
+            html += '    <span class="badge badge-success">Open</span>';
+            html += '  </div>';
+            html += '  <div class="pickup-card__meta">';
+            html += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">🏪</span><span>' + item.providerName + '</span></div>';
+            html += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">🏢</span><span>' + item.ngoName + '</span></div>';
+            html += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">📍</span><span>' + item.pickupAddress + '</span></div>';
+            html += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">⏰</span><span>Expires: ' + item.expiryTime + '</span></div>';
+            html += '  </div>';
+            html += '  <div class="pickup-card__actions">';
+            html += '    <button class="btn btn-primary btn-sm" onclick="handlePickupAction(' + item.claimId + ', \'ACCEPT\', this)">Accept Pickup</button>';
+            html += '  </div>';
+            html += '</div>';
+          });
+        }
+        container.innerHTML = html;
+
+        // Update available badge
+        var availableBadge = document.querySelector('.sidebar__link[data-page="available"] .sidebar__link-badge');
+        if (availableBadge) {
+          availableBadge.textContent = data.length || '';
+          availableBadge.style.display = data.length ? 'inline-flex' : 'none';
+        }
+      })
+      .catch(function(err) {
+        console.error('Failed to fetch available pickups', err);
+        container.innerHTML = '<div style="padding:2rem;text-align:center;color:red;">Error loading pickups.</div>';
+      });
+  };
+
+  window.fetchVolunteerMyPickups = function() {
+    var tbody = document.querySelector('#page-my-pickups tbody');
+    var activeContainer = document.querySelector('#page-dashboard .dashboard-panel__body');
+    if (!tbody || !activeContainer) return;
+
+    fetch('../volunteer/my-pickups')
+      .then(function(res) {
+        if (!res.ok) throw new Error('Network error');
+        return res.json();
+      })
+      .then(function(data) {
+        var tableHtml = '';
+        var activeHtml = '';
+        var activeCount = 0;
+
+        if (!data || data.length === 0) {
+          tableHtml = '<tr><td colspan="5" style="text-align:center;padding:2rem;">You have no active pickups.</td></tr>';
+          activeHtml = '<div style="padding:2rem;text-align:center;">No active pickups.</div>';
+        } else {
+          data.forEach(function(pickup) {
+            // Table view
+            var statusClass = 'badge-info';
+            if (pickup.status === 'ACCEPTED') statusClass = 'badge-warning';
+            if (pickup.status === 'DELIVERED') statusClass = 'badge-success';
+
+            tableHtml += '<tr>';
+            tableHtml += '  <td><div class="data-table__food-name">' + pickup.foodName + '</div></td>';
+            tableHtml += '  <td>' + pickup.providerName + '</td>';
+            tableHtml += '  <td>' + pickup.ngoName + '</td>';
+            tableHtml += '  <td><span class="badge ' + statusClass + '">' + pickup.status + '</span></td>';
+            tableHtml += '  <td>';
+            if (pickup.status === 'ACCEPTED') {
+              tableHtml += '    <button class="btn btn-sm btn-primary" onclick="handlePickupAction(' + pickup.pickupId + ', \'PICKED_UP\', this)">Mark Picked Up</button>';
+            } else if (pickup.status === 'PICKED_UP') {
+              tableHtml += '    <button class="btn btn-sm btn-primary" onclick="handlePickupAction(' + pickup.pickupId + ', \'DELIVERED\', this)">Mark Delivered</button>';
+            }
+            tableHtml += '  </td>';
+            tableHtml += '</tr>';
+
+            // Active Card View (Only show if not delivered/cancelled)
+            if (pickup.status === 'ACCEPTED' || pickup.status === 'PICKED_UP') {
+              activeCount++;
+              var isPickedUp = pickup.status === 'PICKED_UP';
+              activeHtml += '<div class="pickup-card">';
+              activeHtml += '  <div class="pickup-card__header">';
+              activeHtml += '    <h4 class="pickup-card__title">' + pickup.foodName + ' &mdash; ' + pickup.quantity + ' ' + pickup.unit + '</h4>';
+              activeHtml += '    <span class="badge ' + statusClass + '">' + pickup.status + '</span>';
+              activeHtml += '  </div>';
+
+              activeHtml += '  <div class="status-flow">';
+              activeHtml += '    <div class="status-flow__step status-flow__step--completed">✓ Accepted</div>';
+              activeHtml += '    <div class="status-flow__arrow">→</div>';
+              activeHtml += '    <div class="status-flow__step ' + (isPickedUp ? 'status-flow__step--completed">✓' : 'status-flow__step--active">') + ' Picked Up</div>';
+              activeHtml += '    <div class="status-flow__arrow">→</div>';
+              activeHtml += '    <div class="status-flow__step">Delivered</div>';
+              activeHtml += '  </div>';
+
+              activeHtml += '  <div class="pickup-card__meta">';
+              activeHtml += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">🏪</span><span>' + pickup.providerName + '</span></div>';
+              activeHtml += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">🏢</span><span>' + pickup.ngoName + '</span></div>';
+              activeHtml += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">📍</span><span>' + pickup.providerAddress + ' &rarr; ' + pickup.ngoAddress + '</span></div>';
+              activeHtml += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">⏰</span><span>Expires: ' + pickup.expiryTime + '</span></div>';
+              activeHtml += '  </div>';
+
+              activeHtml += '  <div class="pickup-card__actions">';
+              if (!isPickedUp) {
+                activeHtml += '    <button class="btn btn-primary btn-sm" onclick="handlePickupAction(' + pickup.pickupId + ', \'PICKED_UP\', this)">Mark Picked Up</button>';
+              } else {
+                activeHtml += '    <button class="btn btn-primary btn-sm" onclick="handlePickupAction(' + pickup.pickupId + ', \'DELIVERED\', this)">Mark Delivered</button>';
+              }
+              activeHtml += '  </div>';
+              activeHtml += '</div>';
+            }
+          });
+
+          if (activeCount === 0) {
+            activeHtml = '<div style="padding:2rem;text-align:center;">No active pickups.</div>';
+          }
+        }
+
+        tbody.innerHTML = tableHtml;
+        activeContainer.innerHTML = activeHtml;
+      })
+      .catch(function(err) {
+        console.error('Failed to fetch my pickups', err);
+      });
+  };
+
+  window.handlePickupAction = function(id, action, btnElem) {
+    if (!confirm('Are you sure you want to perform this action (' + action + ')?')) {
+      return;
+    }
+
+    // Prevent double submission
+    if (btnElem) {
+      btnElem.disabled = true;
+      btnElem.textContent = 'Processing...';
+    }
+
+    var formData = new URLSearchParams();
+    formData.append('action', action);
+    if (action === 'ACCEPT') {
+      formData.append('claimId', id);
+    } else {
+      formData.append('pickupId', id);
+    }
+
+    fetch('../volunteer/pickup-action', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: formData.toString()
+    })
+    .then(function(res) {
+      if (!res.ok) throw new Error('Action failed');
+      return res.json();
+    })
+    .then(function(data) {
+      if (typeof showToast === 'function') {
+        showToast(data.message || 'Action completed successfully!', 'success');
+      } else {
+        alert(data.message || 'Action completed successfully!');
+      }
+      // Refresh UI
+      if (typeof fetchVolunteerAvailablePickups === 'function') fetchVolunteerAvailablePickups();
+      if (typeof fetchVolunteerMyPickups === 'function') fetchVolunteerMyPickups();
+    })
+    .catch(function(err) {
+      console.error('Action error:', err);
+      if (typeof showToast === 'function') {
+        showToast('Action failed. Invalid state or unauthorized.', 'danger');
+      } else {
+        alert('Action failed.');
+      }
+      if (btnElem) {
+        btnElem.disabled = false;
+        btnElem.textContent = action.replace('_', ' ');
+      }
+    });
+  };
 
   document.addEventListener('DOMContentLoaded', function() {
-    fetchProviderListings();
-    fetchNGOAvailableFood();
+    if (document.getElementById('recent-listings-tbody')) {
+      fetchProviderListings();
+    }
+    if (document.getElementById('ngo-recent-available-tbody')) {
+      fetchNGOAvailableFood();
+    }
+
+    // Volunteer specific calls
+    if (document.querySelector('#page-available .dashboard-panel__body')) {
+      fetchVolunteerAvailablePickups();
+      fetchVolunteerMyPickups();
+    }
 
     // Show success toast after claim redirect
     var urlParams = new URLSearchParams(window.location.search);

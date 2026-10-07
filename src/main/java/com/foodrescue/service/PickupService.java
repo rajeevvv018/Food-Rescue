@@ -123,4 +123,36 @@ public class PickupService {
         }
         return pickupDAO.deletePickup(id);
     }
+
+    // Method 9: Accept Pickup
+    public boolean acceptPickup(long claimId, long volunteerId) throws SQLException {
+        if (claimId <= 0 || volunteerId <= 0) {
+            return false;
+        }
+        return pickupDAO.acceptPickup(claimId, volunteerId);
+    }
+
+    // Method 10: Mark Picked Up
+    public boolean markPickedUp(long pickupId, long volunteerId) throws SQLException {
+        if (pickupId <= 0 || volunteerId <= 0) {
+            return false;
+        }
+        return pickupDAO.updatePickupStatusSafe(pickupId, volunteerId, "ACCEPTED", "PICKED_UP");
+    }
+
+    // Method 11: Mark Delivered
+    public boolean markDelivered(long pickupId, long volunteerId) throws SQLException {
+        if (pickupId <= 0 || volunteerId <= 0) {
+            return false;
+        }
+        return pickupDAO.updatePickupStatusSafe(pickupId, volunteerId, "PICKED_UP", "DELIVERED");
+    }
+
+    // Method 12: Get My Pickups With Details
+    public List<com.foodrescue.model.PickupDTO> getMyPickupsWithDetails(long volunteerId) throws SQLException {
+        if (volunteerId <= 0) {
+            return Collections.emptyList();
+        }
+        return pickupDAO.getMyPickupsWithDetails(volunteerId);
+    }
 }
