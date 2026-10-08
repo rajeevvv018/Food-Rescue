@@ -517,6 +517,79 @@
     showPage('edit-food');
   };
 
+  // ===== Provider Pickups Integration =====
+  window.fetchProviderPickups = function() {
+    var tbody = document.getElementById('provider-pickups-tbody');
+    if (!tbody) return;
+
+    fetch('../provider/claims')
+      .then(function(response) {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(function(data) {
+        tbody.innerHTML = '';
+        var hasPickups = false;
+
+        data.forEach(function(claim) {
+          if (claim.status === 'READY_FOR_PICKUP' || claim.status === 'ACCEPTED' || 
+              claim.status === 'PICKED_UP' || claim.status === 'DELIVERED') {
+            hasPickups = true;
+            var tr = document.createElement('tr');
+            
+            var tdFood = document.createElement('td');
+            var divFood = document.createElement('div');
+            divFood.className = 'data-table__food-name';
+            divFood.textContent = claim.foodName || 'Unknown Food';
+            tdFood.appendChild(divFood);
+            tr.appendChild(tdFood);
+
+            var tdVolunteer = document.createElement('td');
+            tdVolunteer.textContent = (claim.status === 'READY_FOR_PICKUP') ? 'Pending Assignment' : 'Assigned';
+            tr.appendChild(tdVolunteer);
+
+            var tdNgo = document.createElement('td');
+            tdNgo.textContent = claim.ngoName || 'Unknown NGO';
+            tr.appendChild(tdNgo);
+
+            var tdStatus = document.createElement('td');
+            var badge = document.createElement('span');
+            badge.className = 'badge';
+            if (claim.status === 'READY_FOR_PICKUP') {
+              badge.classList.add('badge-warning');
+              badge.textContent = 'Awaiting Volunteer';
+            } else if (claim.status === 'ACCEPTED') {
+              badge.classList.add('badge-info');
+              badge.textContent = 'Volunteer En Route';
+            } else if (claim.status === 'PICKED_UP') {
+              badge.classList.add('badge-info');
+              badge.textContent = 'In Transit';
+            } else if (claim.status === 'DELIVERED') {
+              badge.classList.add('badge-success');
+              badge.textContent = 'Delivered';
+            } else {
+              badge.classList.add('badge-secondary');
+              badge.textContent = claim.status;
+            }
+            tdStatus.appendChild(badge);
+            tr.appendChild(tdStatus);
+
+            tbody.appendChild(tr);
+          }
+        });
+
+        if (!hasPickups) {
+          tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No pickup records found.</td></tr>';
+        }
+      })
+      .catch(function(error) {
+        console.error('Error fetching provider pickups:', error);
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:red;">Unable to load pickup status. Please try again.</td></tr>';
+      });
+  };
+
   // ===== Fetch NGO Available Food =====
   function fetchNGOAvailableFood() {
     var recentAvailableTbody = document.getElementById('ngo-recent-available-tbody');
@@ -967,6 +1040,9 @@
       }
       if (typeof loadProviderClaims === 'function' && document.getElementById('claims-table-body')) {
         loadProviderClaims();
+      }
+      if (typeof fetchProviderPickups === 'function') {
+        fetchProviderPickups();
       }
     }
 
