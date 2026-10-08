@@ -223,29 +223,8 @@
               <thead>
                 <tr><th>Food</th><th>From</th><th>To</th><th>Date</th><th>Status</th></tr>
               </thead>
-              <tbody>
-
-                <tr>
-                  <td><div class="data-table__food-name">Vegetable Pulao</div></td>
-                  <td>Green Eats</td>
-                  <td>Hope Foundation</td>
-                  <td>Oct 5, 2024</td>
-                  <td><span class="badge badge-success">Delivered</span></td>
-                </tr>
-                <tr>
-                  <td><div class="data-table__food-name">Rice &amp; Dal</div></td>
-                  <td>Homestyle Kitchen</td>
-                  <td>Community Care</td>
-                  <td>Oct 4, 2024</td>
-                  <td><span class="badge badge-success">Delivered</span></td>
-                </tr>
-                <tr>
-                  <td><div class="data-table__food-name">Assorted Snacks</div></td>
-                  <td>Café 24</td>
-                  <td>Food for All NGO</td>
-                  <td>Oct 3, 2024</td>
-                  <td><span class="badge badge-success">Delivered</span></td>
-                </tr>
+              <tbody id="volunteer-history-tbody">
+                <tr><td colspan="5" style="text-align:center;">Loading...</td></tr>
               </tbody>
             </table>
           </div>
@@ -262,7 +241,7 @@
           </div>
         </div>
         <div class="dashboard-panel">
-          <div class="dashboard-panel__body">
+          <div class="dashboard-panel__body" id="notifications-container">
             <!-- Handled dynamically by JS -->
           </div>
         </div>

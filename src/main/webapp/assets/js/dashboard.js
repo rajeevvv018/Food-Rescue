@@ -109,22 +109,120 @@
     });
   }
 
-  // Mark all read
-  var markAllRead = document.getElementById('mark-all-read');
-  if (markAllRead) {
-    markAllRead.addEventListener('click', function () {
-      var unreadItems = document.querySelectorAll('.notification-item--unread');
-      unreadItems.forEach(function (item) {
-        item.classList.remove('notification-item--unread');
-        var dot = item.querySelector('.notification-item__dot');
-        if (dot) dot.remove();
-      });
+  // ===== Notifications API Integration =====
+  window.fetchNotifications = function() {
+    var notifList = document.querySelector('.notification-panel__list');
+    var pageNotifContainer = document.getElementById('notifications-container');
+    var countBadge = document.getElementById('notification-count');
+    
+    // Fetch unread count
+    fetch('../notifications?action=unreadCount')
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (data && typeof data.unreadCount === 'number') {
+          if (countBadge) {
+            countBadge.textContent = data.unreadCount;
+            countBadge.style.display = data.unreadCount > 0 ? 'flex' : 'none';
+          }
+          // Also update sidebar badge if exists
+          var sidebarBadge = document.querySelector('.sidebar__link[data-page="notifications"] .sidebar__link-badge');
+          if (sidebarBadge) {
+            sidebarBadge.textContent = data.unreadCount;
+            sidebarBadge.style.display = data.unreadCount > 0 ? 'inline-block' : 'none';
+          }
+        }
+      }).catch(function(e) { console.error('Error fetching unread count', e); });
 
-      var countBadge = document.getElementById('notification-count');
-      if (countBadge) {
-        countBadge.textContent = '0';
-        countBadge.style.display = 'none';
-      }
+    // Fetch notifications list
+    fetch('../notifications')
+      .then(function(res) { 
+        if(!res.ok) throw new Error('Failed to load notifications');
+        return res.json(); 
+      })
+      .then(function(data) {
+        if (notifList) {
+          notifList.innerHTML = '';
+        }
+        var pageHtml = '';
+        if (data && data.length > 0) {
+          data.forEach(function(n) {
+            // Determine Icon based on type
+            var icon = '🔔';
+            var iconClass = 'notification-item__icon--info';
+            var tstr = (n.title || n.message || '').toUpperCase();
+            if (tstr.includes('APPROVED')) { icon = '✅'; iconClass = 'notification-item__icon--success'; }
+            else if (tstr.includes('PICKUP') || tstr.includes('VOLUNTEER') || tstr.includes('ACCEPTED')) { icon = '🚴'; iconClass = 'notification-item__icon--info'; }
+            else if (tstr.includes('EXPIRE') || tstr.includes('WARNING') || tstr.includes('REJECTED')) { icon = '⏰'; iconClass = 'notification-item__icon--warning'; }
+            else if (tstr.includes('DELIVERED')) { icon = '📦'; iconClass = 'notification-item__icon--success'; }
+            else if (tstr.includes('CLAIM')) { icon = '✋'; iconClass = 'notification-item__icon--info'; }
+
+            var unreadClass = n.isRead ? '' : 'notification-item--unread';
+            var dotHtml = n.isRead ? '' : '<div class="notification-item__dot"></div>';
+            var timeHtml = n.createdAt ? '<div class="notification-item__time">' + n.createdAt + '</div>' : '';
+
+            var itemHtml = 
+              '<div class="notification-item ' + unreadClass + '">' +
+                '<div class="notification-item__icon ' + iconClass + '">' + icon + '</div>' +
+                '<div class="notification-item__content">' +
+                  '<div class="notification-item__title">' + (n.title || n.message) + '</div>' +
+                  timeHtml +
+                '</div>' +
+                dotHtml +
+              '</div>';
+
+            if (notifList) {
+              notifList.innerHTML += itemHtml;
+            }
+            
+            // Build larger card for the notifications page
+            var cardBorder = n.isRead ? 'border-left: 4px solid var(--color-border);' : 'border-left: 4px solid var(--color-primary);';
+            pageHtml += 
+              '<div style="padding: 1rem; border-bottom: 1px solid var(--color-border); ' + cardBorder + ' background: ' + (n.isRead ? 'transparent' : 'var(--color-background-alt)') + ';">' +
+                '<div style="display: flex; align-items: flex-start; gap: 1rem;">' +
+                  '<div style="font-size: 1.5rem;">' + icon + '</div>' +
+                  '<div style="flex: 1;">' +
+                    '<div style="font-weight: 600; margin-bottom: 0.25rem;">' + (n.title || 'Notification') + '</div>' +
+                    '<div style="color: var(--color-text-muted); margin-bottom: 0.5rem; font-size: 0.9rem;">' + n.message + '</div>' +
+                    '<div style="color: var(--color-text-muted); font-size: 0.75rem;">' + (n.createdAt || '') + '</div>' +
+                  '</div>' +
+                '</div>' +
+              '</div>';
+          });
+        } else {
+          if (notifList) {
+            notifList.innerHTML = '<div style="padding:1rem;text-align:center;color:var(--color-text-muted);">No notifications yet.</div>';
+          }
+          pageHtml = '<div style="padding:2rem;text-align:center;color:var(--color-text-muted);">No notifications yet.</div>';
+        }
+
+        if (pageNotifContainer) {
+          pageNotifContainer.innerHTML = pageHtml;
+        }
+      })
+      .catch(function(e) { 
+        console.error('Error fetching notifications', e); 
+        if (notifList) {
+          notifList.innerHTML = '<div style="padding:1rem;text-align:center;color:red;">Error loading notifications</div>';
+        }
+        if (pageNotifContainer) {
+          pageNotifContainer.innerHTML = '<div style="padding:2rem;text-align:center;color:red;">Unable to load notifications. Please try again.</div>';
+        }
+      });
+  };
+
+  // Mark all read API
+  var markAllReadBtn = document.getElementById('mark-all-read');
+  if (markAllReadBtn) {
+    markAllReadBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      fetch('../notifications?action=markAllRead', { method: 'POST' })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+          if (data && data.success) {
+             window.fetchNotifications();
+          }
+        })
+        .catch(function(err) { console.error('Error marking all as read', err); });
     });
   }
 
@@ -767,6 +865,7 @@
   window.fetchVolunteerMyPickups = function() {
     var tbody = document.querySelector('#page-my-pickups tbody');
     var activeContainer = document.querySelector('#page-dashboard .dashboard-panel__body');
+    var historyTbody = document.getElementById('volunteer-history-tbody');
     if (!tbody || !activeContainer) return;
 
     fetch('../volunteer/my-pickups')
@@ -777,35 +876,46 @@
       .then(function(data) {
         var tableHtml = '';
         var activeHtml = '';
+        var historyHtml = '';
         var activeCount = 0;
+        var historyCount = 0;
 
         if (!data || data.length === 0) {
           tableHtml = '<tr><td colspan="5" style="text-align:center;padding:2rem;">You have no active pickups.</td></tr>';
           activeHtml = '<div style="padding:2rem;text-align:center;">No active pickups.</div>';
+          historyHtml = '<tr><td colspan="5" style="text-align:center;padding:2rem;">No pickup history.</td></tr>';
         } else {
           data.forEach(function(pickup) {
-            // Table view
             var statusClass = 'badge-info';
             if (pickup.status === 'ACCEPTED') statusClass = 'badge-warning';
             if (pickup.status === 'DELIVERED') statusClass = 'badge-success';
 
-            tableHtml += '<tr>';
-            tableHtml += '  <td><div class="data-table__food-name">' + pickup.foodName + '</div></td>';
-            tableHtml += '  <td>' + pickup.providerName + '</td>';
-            tableHtml += '  <td>' + pickup.ngoName + '</td>';
-            tableHtml += '  <td><span class="badge ' + statusClass + '">' + pickup.status + '</span></td>';
-            tableHtml += '  <td>';
-            if (pickup.status === 'ACCEPTED') {
-              tableHtml += '    <button class="btn btn-sm btn-primary" onclick="handlePickupAction(' + pickup.pickupId + ', \'PICKED_UP\', this)">Mark Picked Up</button>';
-            } else if (pickup.status === 'PICKED_UP') {
-              tableHtml += '    <button class="btn btn-sm btn-primary" onclick="handlePickupAction(' + pickup.pickupId + ', \'DELIVERED\', this)">Mark Delivered</button>';
+            var trHtml = '<tr>';
+            trHtml += '  <td><div class="data-table__food-name">' + pickup.foodName + '</div></td>';
+            trHtml += '  <td>' + pickup.providerName + '</td>';
+            trHtml += '  <td>' + pickup.ngoName + '</td>';
+            trHtml += '  <td>' + (pickup.pickupTime ? pickup.pickupTime.split(' ')[0] : 'N/A') + '</td>';
+            trHtml += '  <td><span class="badge ' + statusClass + '">' + pickup.status + '</span></td>';
+            
+            var isDelivered = pickup.status === 'DELIVERED';
+            
+            if (isDelivered) {
+              historyHtml += trHtml + '</tr>';
+              historyCount++;
+            } else {
+              var activeTr = trHtml + '  <td>';
+              if (pickup.status === 'ACCEPTED') {
+                activeTr += '    <button class="btn btn-sm btn-primary" onclick="handlePickupAction(' + pickup.pickupId + ', \'PICKED_UP\', this)">Mark Picked Up</button>';
+              } else if (pickup.status === 'PICKED_UP') {
+                activeTr += '    <button class="btn btn-sm btn-primary" onclick="handlePickupAction(' + pickup.pickupId + ', \'DELIVERED\', this)">Mark Delivered</button>';
+              }
+              activeTr += '  </td></tr>';
+              tableHtml += activeTr;
+              activeCount++;
             }
-            tableHtml += '  </td>';
-            tableHtml += '</tr>';
 
             // Active Card View (Only show if not delivered/cancelled)
             if (pickup.status === 'ACCEPTED' || pickup.status === 'PICKED_UP') {
-              activeCount++;
               var isPickedUp = pickup.status === 'PICKED_UP';
               activeHtml += '<div class="pickup-card">';
               activeHtml += '  <div class="pickup-card__header">';
@@ -840,15 +950,27 @@
           });
 
           if (activeCount === 0) {
+            tableHtml = '<tr><td colspan="5" style="text-align:center;padding:2rem;">You have no active pickups.</td></tr>';
             activeHtml = '<div style="padding:2rem;text-align:center;">No active pickups.</div>';
+          }
+          if (historyCount === 0) {
+            historyHtml = '<tr><td colspan="5" style="text-align:center;padding:2rem;">No pickup history.</td></tr>';
           }
         }
 
         tbody.innerHTML = tableHtml;
         activeContainer.innerHTML = activeHtml;
+        if (historyTbody) {
+          historyTbody.innerHTML = historyHtml;
+        }
       })
       .catch(function(err) {
         console.error('Failed to fetch my pickups', err);
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:red;">Unable to load data. Please try again.</td></tr>';
+        activeContainer.innerHTML = '<div style="padding:2rem;text-align:center;color:red;">Unable to load data. Please try again.</div>';
+        if (historyTbody) {
+          historyTbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:red;">Unable to load data. Please try again.</td></tr>';
+        }
       });
   };
 
@@ -1030,8 +1152,11 @@
   document.addEventListener('DOMContentLoaded', function() {
     var path = window.location.pathname || '';
     
-    // Always fetch user profile on dashboard load
+    // Always fetch user profile and notifications on dashboard load
     fetchUserProfile();
+    if (typeof fetchNotifications === 'function') {
+      fetchNotifications();
+    }
 
     // Provider specific calls
     if (path.includes('/provider/')) {
