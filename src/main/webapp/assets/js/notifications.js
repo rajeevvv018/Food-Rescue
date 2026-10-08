@@ -1,49 +1,13 @@
 /**
  * FoodRescue — Notifications JavaScript
- * Handles real-time notification polling and display.
- * TODO: Connect to backend notifications endpoint.
+ * Handles real-time notification polling and display via API.
  */
 
 (function () {
   'use strict';
 
-  // ===== Mock Notification Data =====
-  // TODO: Replace with data from NotificationDAO via Servlet/JSP when backend is ready
-  var mockNotifications = [
-    {
-      id: 1,
-      type: 'success',
-      title: 'Food Claim Approved',
-      message: 'Chicken Biryani claimed by Hope Foundation',
-      time: '2 minutes ago',
-      read: false
-    },
-    {
-      id: 2,
-      type: 'info',
-      title: 'Pickup assigned to you',
-      message: 'Volunteer Rahul V. assigned for pickup',
-      time: '15 minutes ago',
-      read: false
-    },
-    {
-      id: 3,
-      type: 'warning',
-      title: 'New food available nearby',
-      message: 'Fresh Cooked Meals from ABC Restaurant',
-      time: '1 hour ago',
-      read: false
-    },
-    {
-      id: 4,
-      type: 'success',
-      title: 'Pickup completed',
-      message: 'Rice & Dal delivered successfully',
-      time: '3 hours ago',
-      read: true
-    }
-  ];
-
+  // Base API endpoint
+  var API_URL = '../notifications';
 
   /**
    * Renders notification items into the panel list.
@@ -54,76 +18,158 @@
     if (!listContainer) return;
     listContainer.innerHTML = '';
 
-    var icons = {
-      success: '✅',
-      warning: '⚠️',
-      info: 'ℹ️',
-      danger: '❌'
-    };
+    if (!notifications || notifications.length === 0) {
+      listContainer.innerHTML = '<div style="padding:1rem;text-align:center;color:#666;">No notifications yet.</div>';
+      return;
+    }
 
     notifications.forEach(function (notif) {
       var item = document.createElement('div');
-      item.className = 'notification-item' + (notif.read ? '' : ' notification-item--unread');
+      item.className = 'notification-item' + (notif.isRead ? '' : ' notification-item--unread');
       item.setAttribute('data-id', notif.id);
 
+      // We'll just use a default bell icon, but you can parse title/message if you want custom icons
+      var icon = '🔔';
+      if ((notif.title || '').toLowerCase().includes('success') || (notif.title || '').toLowerCase().includes('approved')) icon = '✅';
+      else if ((notif.title || '').toLowerCase().includes('reject')) icon = '❌';
+
       item.innerHTML =
-        '<div class="notification-item__icon notification-item__icon--' + notif.type + '">' +
-          (icons[notif.type] || '🔔') +
-        '</div>' +
+        '<div class="notification-item__icon">' + icon + '</div>' +
         '<div class="notification-item__content">' +
-          '<div class="notification-item__title">' + notif.title + '</div>' +
-          '<div class="notification-item__time">' + notif.time + '</div>' +
+          '<div class="notification-item__title">' + (notif.title || 'Notification') + '</div>' +
+          '<div class="notification-item__message" style="font-size:0.8rem;color:#666;margin-bottom:0.25rem;">' + (notif.message || '') + '</div>' +
+          '<div class="notification-item__time" style="font-size:0.7rem;color:#999;">' + (notif.createdAt || '') + '</div>' +
         '</div>' +
-        (notif.read ? '' : '<div class="notification-item__dot"></div>');
+        (notif.isRead ? '' : '<div class="notification-item__dot"></div>');
 
       // Mark individual as read on click
       item.addEventListener('click', function () {
-        notif.read = true;
-        item.classList.remove('notification-item--unread');
-        var dot = item.querySelector('.notification-item__dot');
-        if (dot) dot.remove();
-        updateUnreadCount(notifications);
+        if (notif.isRead) return;
+
+        // API call to mark as read
+        var formData = new URLSearchParams();
+        formData.append('action', 'read');
+        formData.append('notificationId', notif.id);
+
+        fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: formData.toString()
+        })
+        .then(function(res) {
+          if (res.ok) {
+            notif.isRead = true;
+            item.classList.remove('notification-item--unread');
+            var dot = item.querySelector('.notification-item__dot');
+            if (dot) dot.remove();
+            updateUnreadCountBadge();
+          }
+        })
+        .catch(function(err) {
+          console.error('Failed to mark notification read', err);
+        });
       });
 
       listContainer.appendChild(item);
     });
   }
 
-
   /**
-   * Updates the unread count badge.
-   * @param {Array} notifications
+   * Fetches the unread count from API and updates badge.
    */
-  function updateUnreadCount(notifications) {
-    var unread = notifications.filter(function (n) { return !n.read; }).length;
+  function updateUnreadCountBadge() {
     var countBadge = document.getElementById('notification-count');
-    if (countBadge) {
-      countBadge.textContent = unread;
-      countBadge.style.display = unread > 0 ? 'flex' : 'none';
-    }
+    if (!countBadge) return;
+
+    fetch(API_URL + '?type=count')
+      .then(function(res) {
+        if (!res.ok) throw new Error('Failed to fetch count');
+        return res.json();
+      })
+      .then(function(data) {
+        if (data && data.success) {
+          var unread = data.count || 0;
+          countBadge.textContent = unread;
+          countBadge.style.display = unread > 0 ? 'inline-flex' : 'none';
+        }
+      })
+      .catch(function(err) {
+        console.error('Error fetching notification count:', err);
+        countBadge.style.display = 'none';
+      });
   }
 
+  /**
+   * Fetches all notifications for the dropdown.
+   */
+  function loadNotifications() {
+    var panel = document.getElementById('notification-panel');
+    if (!panel) return;
+    var list = panel.querySelector('.notification-panel__list');
+    if (!list) return;
+
+    list.innerHTML = '<div style="padding:1rem;text-align:center;color:#666;">Loading...</div>';
+
+    fetch(API_URL)
+      .then(function(res) {
+        if (!res.ok) throw new Error('Failed to fetch notifications');
+        return res.json();
+      })
+      .then(function(data) {
+        if (data && data.success) {
+          renderNotifications(data.notifications || [], list);
+        } else {
+          list.innerHTML = '<div style="padding:1rem;text-align:center;color:red;">Error loading notifications.</div>';
+        }
+      })
+      .catch(function(err) {
+        console.error('Error fetching notifications:', err);
+        list.innerHTML = '<div style="padding:1rem;text-align:center;color:red;">Failed to load notifications.</div>';
+      });
+  }
 
   /**
    * Initialize notifications if the panel exists on this page.
    */
   function initNotifications() {
-    var panel = document.getElementById('notification-panel');
-    if (!panel) return;
+    // Initial fetch of unread count
+    updateUnreadCountBadge();
 
-    var list = panel.querySelector('.notification-panel__list');
-    renderNotifications(mockNotifications, list);
-    updateUnreadCount(mockNotifications);
+    // Setup Notification Toggle button to load notifications when opened
+    var toggleBtn = document.getElementById('notification-btn');
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', function() {
+        // Load notifications every time it's opened for fresh data
+        loadNotifications();
+      });
+    }
 
     // Mark all read button
     var markAllBtn = document.getElementById('mark-all-read');
     if (markAllBtn) {
       markAllBtn.addEventListener('click', function () {
-        mockNotifications.forEach(function (n) { n.read = true; });
-        renderNotifications(mockNotifications, list);
-        updateUnreadCount(mockNotifications);
+        var formData = new URLSearchParams();
+        formData.append('action', 'read-all');
+
+        fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: formData.toString()
+        })
+        .then(function(res) {
+          if (res.ok) {
+            loadNotifications();
+            updateUnreadCountBadge();
+          }
+        })
+        .catch(function(err) {
+          console.error('Failed to mark all read', err);
+        });
       });
     }
+
+    // Poll count every 30 seconds
+    setInterval(updateUnreadCountBadge, 30000);
   }
 
   // Run init when DOM is ready

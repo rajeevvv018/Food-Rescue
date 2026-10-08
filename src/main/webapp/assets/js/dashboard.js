@@ -2,7 +2,7 @@
  * FoodRescue — Dashboard JavaScript
  * Sidebar navigation, page switching, notification dropdown,
  * mobile sidebar toggle, and shared dashboard interactions.
- * TODO: Replace mock data with backend API responses.
+ * Handles UI logic for Provider, NGO, and Volunteer dashboards.
  */
 
 (function () {
@@ -133,9 +133,9 @@
   var logoutBtn = document.getElementById('logout-btn');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', function () {
-      // TODO: Replace with actual backend logout integration (e.g. redirect to LogoutServlet)
+      // Redirect to LogoutServlet to invalidate session
       if (confirm('Are you sure you want to logout?')) {
-        window.location.href = '../login.html';
+        window.location.href = '../logout';
       }
     });
   }
@@ -602,6 +602,47 @@
     document.body.appendChild(form);
     form.submit();
   };
+  // ===== Fetch NGO Claims =====
+  function fetchNGOClaims() {
+    var claimsTbody = document.getElementById('ngo-claims-tbody');
+    if (!claimsTbody) return;
+
+    fetch('../ngo/claims')
+      .then(function(response) {
+        if (!response.ok) throw new Error('Network error');
+        return response.json();
+      })
+      .then(function(data) {
+        var html = '';
+        if (data.length === 0) {
+          html = '<tr><td colspan="5" style="text-align:center;padding:2rem;">No claims found.</td></tr>';
+        } else {
+          data.forEach(function(claim) {
+            html += '<tr>';
+            html += '  <td><div class="data-table__food-name">' + claim.foodName + '</div></td>';
+            html += '  <td>' + (claim.providerName || '-') + '</td>';
+            html += '  <td>' + claim.claimedQuantity + ' ' + (claim.unit || '') + '</td>';
+
+            var status = (claim.status || '').toUpperCase();
+            var badgeClass = 'badge-info';
+            if (status === 'PENDING' || status === 'AWAITING PICKUP') badgeClass = 'badge-warning';
+            else if (status === 'APPROVED' || status === 'READY_FOR_PICKUP') badgeClass = 'badge-success';
+            else if (status === 'DELIVERED') badgeClass = 'badge-success';
+            else if (status === 'REJECTED') badgeClass = 'badge-danger';
+
+            html += '  <td><span class="badge ' + badgeClass + '">' + status + '</span></td>';
+            html += '  <td><button class="btn btn-sm btn-secondary">Details</button></td>';
+            html += '</tr>';
+          });
+        }
+        claimsTbody.innerHTML = html;
+      })
+      .catch(function(error) {
+        console.error('Error fetching NGO claims:', error);
+        claimsTbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:red;">Error loading claims.</td></tr>';
+      });
+  }
+
   // ===== Volunteer Dashboard Integration =====
   window.fetchVolunteerAvailablePickups = function() {
     var container = document.querySelector('#page-available .dashboard-panel__body');
@@ -791,17 +832,34 @@
   };
 
   document.addEventListener('DOMContentLoaded', function() {
-    if (document.getElementById('recent-listings-tbody')) {
-      fetchProviderListings();
+    var path = window.location.pathname || '';
+
+    // Provider specific calls
+    if (path.includes('/provider/')) {
+      if (document.getElementById('recent-listings-tbody')) {
+        fetchProviderListings();
+      }
+      if (typeof loadProviderClaims === 'function' && document.getElementById('claims-table-body')) {
+        loadProviderClaims();
+      }
     }
-    if (document.getElementById('ngo-recent-available-tbody')) {
-      fetchNGOAvailableFood();
+
+    // NGO specific calls
+    if (path.includes('/ngo/')) {
+      if (document.getElementById('ngo-recent-available-tbody')) {
+        fetchNGOAvailableFood();
+      }
+      if (document.getElementById('ngo-claims-tbody')) {
+        fetchNGOClaims();
+      }
     }
 
     // Volunteer specific calls
-    if (document.querySelector('#page-available .dashboard-panel__body')) {
-      fetchVolunteerAvailablePickups();
-      fetchVolunteerMyPickups();
+    if (path.includes('/volunteer/')) {
+      if (document.querySelector('#page-available .dashboard-panel__body')) {
+        fetchVolunteerAvailablePickups();
+        fetchVolunteerMyPickups();
+      }
     }
 
     // Show success toast after claim redirect

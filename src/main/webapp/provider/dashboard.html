@@ -37,7 +37,7 @@
         <div class="notification-dropdown" id="notification-dropdown">
           <button class="notification-btn" id="notification-btn" aria-label="Notifications">
             🔔
-            <span class="notification-btn__count" id="notification-count">3</span>
+            <span class="notification-btn__count" id="notification-count" style="display:none;">0</span>
           </button>
           <div class="notification-panel" id="notification-panel">
             <div class="notification-panel__header">
@@ -121,14 +121,14 @@
         <span class="sidebar__section-label">Management</span>
         <a href="#" class="sidebar__link" data-page="claims">
           <span class="sidebar__link-icon">✋</span> Claims
-          <span class="sidebar__link-badge">2</span>
+          <span class="sidebar__link-badge" style="display:none;">0</span>
         </a>
         <a href="#" class="sidebar__link" data-page="pickups">
           <span class="sidebar__link-icon">🚚</span> Pickup Status
         </a>
         <a href="#" class="sidebar__link" data-page="notifications">
           <span class="sidebar__link-icon">🔔</span> Notifications
-          <span class="sidebar__link-badge">3</span>
+          <span class="sidebar__link-badge" style="display:none;">0</span>
         </a>
 
         <span class="sidebar__section-label">Account</span>
@@ -167,7 +167,7 @@
               <div class="stat-card__icon stat-card__icon--green">📋</div>
               <div class="stat-card__trend stat-card__trend--up">↑ 12%</div>
             </div>
-            <!-- TODO: Replace mock data with backend response -->
+
             <div class="stat-card__value" id="active-listings-count">0</div>
             <div class="stat-card__label">Active Listings</div>
           </div>
@@ -176,21 +176,21 @@
               <div class="stat-card__icon stat-card__icon--blue">✋</div>
               <div class="stat-card__trend stat-card__trend--up">↑ 5%</div>
             </div>
-            <div class="stat-card__value">14</div>
+            <div class="stat-card__value">0</div>
             <div class="stat-card__label">Claimed Food</div>
           </div>
           <div class="stat-card">
             <div class="stat-card__header">
               <div class="stat-card__icon stat-card__icon--yellow">✅</div>
             </div>
-            <div class="stat-card__value">42</div>
+            <div class="stat-card__value">0</div>
             <div class="stat-card__label">Completed Donations</div>
           </div>
           <div class="stat-card">
             <div class="stat-card__header">
               <div class="stat-card__icon stat-card__icon--red">🚚</div>
             </div>
-            <div class="stat-card__value">3</div>
+            <div class="stat-card__value">0</div>
             <div class="stat-card__label">Pending Pickups</div>
           </div>
         </div>
@@ -433,19 +433,7 @@
                 </tr>
               </thead>
               <tbody>
-                <!-- TODO: Replace mock data with backend response -->
-                <tr>
-                  <td><div class="data-table__food-name">Chicken Biryani</div></td>
-                  <td>Rahul V.</td>
-                  <td>Hope Foundation</td>
-                  <td><span class="badge badge-warning">On the way</span></td>
-                </tr>
-                <tr>
-                  <td><div class="data-table__food-name">Rice &amp; Dal</div></td>
-                  <td>Priya K.</td>
-                  <td>Community Care</td>
-                  <td><span class="badge badge-success">Delivered</span></td>
-                </tr>
+                <tr><td colspan="4" style="text-align:center;">Loading...</td></tr>
               </tbody>
             </table>
           </div>
@@ -463,35 +451,7 @@
         </div>
         <div class="dashboard-panel">
           <div class="dashboard-panel__body">
-            <!-- TODO: Replace mock data with backend response -->
-            <div class="notification-item notification-item--unread" style="border-radius:var(--radius-lg);margin-bottom:0.5rem;">
-              <div class="notification-item__icon notification-item__icon--success">✅</div>
-              <div class="notification-item__content">
-                <div class="notification-item__title">Food claim approved — Chicken Biryani claimed by Hope Foundation</div>
-                <div class="notification-item__time">2 minutes ago</div>
-              </div>
-            </div>
-            <div class="notification-item notification-item--unread" style="border-radius:var(--radius-lg);margin-bottom:0.5rem;">
-              <div class="notification-item__icon notification-item__icon--info">🚴</div>
-              <div class="notification-item__content">
-                <div class="notification-item__title">Volunteer Rahul V. assigned for pickup</div>
-                <div class="notification-item__time">15 minutes ago</div>
-              </div>
-            </div>
-            <div class="notification-item" style="border-radius:var(--radius-lg);margin-bottom:0.5rem;">
-              <div class="notification-item__icon notification-item__icon--warning">⏰</div>
-              <div class="notification-item__content">
-                <div class="notification-item__title">Your listing "Fresh Meals" is expiring in 1 hour</div>
-                <div class="notification-item__time">1 hour ago</div>
-              </div>
-            </div>
-            <div class="notification-item" style="border-radius:var(--radius-lg);margin-bottom:0.5rem;">
-              <div class="notification-item__icon notification-item__icon--success">✅</div>
-              <div class="notification-item__content">
-                <div class="notification-item__title">Pickup completed — Rice &amp; Dal delivered successfully</div>
-                <div class="notification-item__time">3 hours ago</div>
-              </div>
-            </div>
+            <!-- Handled dynamically by JS -->
           </div>
         </div>
       </div>

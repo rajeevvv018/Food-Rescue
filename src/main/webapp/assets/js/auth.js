@@ -1,7 +1,6 @@
 /**
  * FoodRescue — Auth JavaScript
  * Login & Register form interactions.
- * TODO: Replace mock logic with actual backend API calls.
  */
 
 (function () {

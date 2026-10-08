@@ -34,7 +34,7 @@
       <div style="display:flex;align-items:center;gap:1rem;">
         <div class="notification-dropdown" id="notification-dropdown">
           <button class="notification-btn" id="notification-btn" aria-label="Notifications">
-            🔔 <span class="notification-btn__count" id="notification-count">2</span>
+            🔔 <span class="notification-btn__count" id="notification-count" style="display:none;">0</span>
           </button>
           <div class="notification-panel" id="notification-panel">
             <div class="notification-panel__header">
@@ -87,7 +87,7 @@
         </a>
         <a href="#" class="sidebar__link" data-page="available">
           <span class="sidebar__link-icon">📦</span> Available Pickups
-          <span class="sidebar__link-badge">3</span>
+          <span class="sidebar__link-badge" style="display:none;">0</span>
         </a>
         <a href="#" class="sidebar__link" data-page="my-pickups">
           <span class="sidebar__link-icon">🚴</span> My Pickups
@@ -98,7 +98,7 @@
         </a>
         <a href="#" class="sidebar__link" data-page="notifications">
           <span class="sidebar__link-icon">🔔</span> Notifications
-          <span class="sidebar__link-badge">2</span>
+          <span class="sidebar__link-badge" style="display:none;">0</span>
         </a>
         <span class="sidebar__section-label">Account</span>
         <a href="#" class="sidebar__link" data-page="profile">
@@ -130,15 +130,15 @@
             <div class="stat-card__header">
               <div class="stat-card__icon stat-card__icon--green">📦</div>
             </div>
-            <!-- TODO: Replace mock data with backend response -->
-            <div class="stat-card__value">5</div>
+
+            <div class="stat-card__value">0</div>
             <div class="stat-card__label">Available Pickups</div>
           </div>
           <div class="stat-card">
             <div class="stat-card__header">
               <div class="stat-card__icon stat-card__icon--blue">🚴</div>
             </div>
-            <div class="stat-card__value">2</div>
+            <div class="stat-card__value">0</div>
             <div class="stat-card__label">Assigned Pickups</div>
           </div>
           <div class="stat-card">
@@ -146,14 +146,14 @@
               <div class="stat-card__icon stat-card__icon--yellow">✅</div>
               <div class="stat-card__trend stat-card__trend--up">↑ 8%</div>
             </div>
-            <div class="stat-card__value">18</div>
+            <div class="stat-card__value">0</div>
             <div class="stat-card__label">Completed Deliveries</div>
           </div>
           <div class="stat-card">
             <div class="stat-card__header">
               <div class="stat-card__icon stat-card__icon--red">⭐</div>
             </div>
-            <div class="stat-card__value">4.8</div>
+            <div class="stat-card__value">0</div>
             <div class="stat-card__label">Rating</div>
           </div>
         </div>
@@ -164,92 +164,7 @@
             <h3 class="dashboard-panel__title">My Active Pickups</h3>
           </div>
           <div class="dashboard-panel__body">
-
-            <!-- Pickup Card 1 -->
-            <div class="pickup-card">
-              <div class="pickup-card__header">
-                <h4 class="pickup-card__title">Chicken Biryani — 30 Servings</h4>
-                <span class="badge badge-warning">Assigned</span>
-              </div>
-
-              <div class="status-flow">
-                <div class="status-flow__step status-flow__step--completed">✓ Assigned</div>
-                <div class="status-flow__arrow">→</div>
-                <div class="status-flow__step status-flow__step--active">Accepted</div>
-                <div class="status-flow__arrow">→</div>
-                <div class="status-flow__step">Picked Up</div>
-                <div class="status-flow__arrow">→</div>
-                <div class="status-flow__step">Delivered</div>
-              </div>
-
-              <div class="pickup-card__meta">
-                <div class="pickup-card__meta-item">
-                  <span class="pickup-card__meta-icon">🏪</span>
-                  <span>Royal Kitchen</span>
-                </div>
-                <div class="pickup-card__meta-item">
-                  <span class="pickup-card__meta-icon">🏢</span>
-                  <span>Hope Foundation</span>
-                </div>
-                <div class="pickup-card__meta-item">
-                  <span class="pickup-card__meta-icon">📍</span>
-                  <span>CP, Delhi → Sector 12, Jaipur</span>
-                </div>
-                <div class="pickup-card__meta-item">
-                  <span class="pickup-card__meta-icon">⏰</span>
-                  <span>Expires: 6:00 PM</span>
-                </div>
-              </div>
-
-              <div class="pickup-card__actions">
-                <button class="btn btn-primary btn-sm">Accept Pickup</button>
-                <button class="btn btn-secondary btn-sm">View Route</button>
-                <button class="btn btn-danger btn-sm">Decline</button>
-              </div>
-            </div>
-
-            <!-- Pickup Card 2 -->
-            <div class="pickup-card">
-              <div class="pickup-card__header">
-                <h4 class="pickup-card__title">Fresh Cooked Meals — 50 Meals</h4>
-                <span class="badge badge-info">Picked Up</span>
-              </div>
-
-              <div class="status-flow">
-                <div class="status-flow__step status-flow__step--completed">✓ Assigned</div>
-                <div class="status-flow__arrow">→</div>
-                <div class="status-flow__step status-flow__step--completed">✓ Accepted</div>
-                <div class="status-flow__arrow">→</div>
-                <div class="status-flow__step status-flow__step--active">Picked Up</div>
-                <div class="status-flow__arrow">→</div>
-                <div class="status-flow__step">Delivered</div>
-              </div>
-
-              <div class="pickup-card__meta">
-                <div class="pickup-card__meta-item">
-                  <span class="pickup-card__meta-icon">🏪</span>
-                  <span>ABC Restaurant</span>
-                </div>
-                <div class="pickup-card__meta-item">
-                  <span class="pickup-card__meta-icon">🏢</span>
-                  <span>Community Care Trust</span>
-                </div>
-                <div class="pickup-card__meta-item">
-                  <span class="pickup-card__meta-icon">📍</span>
-                  <span>MI Road, Jaipur → Mansarovar</span>
-                </div>
-                <div class="pickup-card__meta-item">
-                  <span class="pickup-card__meta-icon">⏰</span>
-                  <span>Expires: 7:30 PM</span>
-                </div>
-              </div>
-
-              <div class="pickup-card__actions">
-                <button class="btn btn-primary btn-sm">Mark Delivered</button>
-                <button class="btn btn-secondary btn-sm">View Route</button>
-              </div>
-            </div>
-
+            <!-- Dynamically populated by JS -->
           </div>
         </div>
       </div>
@@ -265,40 +180,7 @@
         </div>
         <div class="dashboard-panel">
           <div class="dashboard-panel__body">
-            <!-- TODO: Replace mock data with backend response -->
-            <div class="pickup-card">
-              <div class="pickup-card__header">
-                <h4 class="pickup-card__title">Fresh Baked Bread — 100 Loaves</h4>
-                <span class="badge badge-success">Open</span>
-              </div>
-              <div class="pickup-card__meta">
-                <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">🏪</span><span>City Bakery</span></div>
-                <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">🏢</span><span>Food for All NGO</span></div>
-                <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">📍</span><span>Andheri → Bandra, Mumbai</span></div>
-                <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">⏰</span><span>Expires: 9:00 PM</span></div>
-              </div>
-              <div class="pickup-card__actions">
-                <button class="btn btn-primary btn-sm">Accept Pickup</button>
-                <button class="btn btn-secondary btn-sm">View Details</button>
-              </div>
-            </div>
-
-            <div class="pickup-card">
-              <div class="pickup-card__header">
-                <h4 class="pickup-card__title">Vegetable Pulao — 40 Meals</h4>
-                <span class="badge badge-success">Open</span>
-              </div>
-              <div class="pickup-card__meta">
-                <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">🏪</span><span>Green Eats</span></div>
-                <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">🏢</span><span>Hope Foundation</span></div>
-                <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">📍</span><span>Vaishali Nagar → Sector 12, Jaipur</span></div>
-                <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">⏰</span><span>Expires: 8:00 PM</span></div>
-              </div>
-              <div class="pickup-card__actions">
-                <button class="btn btn-primary btn-sm">Accept Pickup</button>
-                <button class="btn btn-secondary btn-sm">View Details</button>
-              </div>
-            </div>
+            <!-- Dynamically populated by JS -->
           </div>
         </div>
       </div>
@@ -319,21 +201,7 @@
                 <tr><th>Food</th><th>From</th><th>To</th><th>Status</th><th>Action</th></tr>
               </thead>
               <tbody>
-                <!-- TODO: Replace mock data with backend response -->
-                <tr>
-                  <td><div class="data-table__food-name">Chicken Biryani</div></td>
-                  <td>Royal Kitchen</td>
-                  <td>Hope Foundation</td>
-                  <td><span class="badge badge-warning">Accepted</span></td>
-                  <td><button class="btn btn-sm btn-primary">Mark Picked Up</button></td>
-                </tr>
-                <tr>
-                  <td><div class="data-table__food-name">Fresh Cooked Meals</div></td>
-                  <td>ABC Restaurant</td>
-                  <td>Community Care</td>
-                  <td><span class="badge badge-info">Picked Up</span></td>
-                  <td><button class="btn btn-sm btn-primary">Mark Delivered</button></td>
-                </tr>
+                <tr><td colspan="5" style="text-align:center;">Loading...</td></tr>
               </tbody>
             </table>
           </div>
@@ -356,7 +224,7 @@
                 <tr><th>Food</th><th>From</th><th>To</th><th>Date</th><th>Status</th></tr>
               </thead>
               <tbody>
-                <!-- TODO: Replace mock data with backend response -->
+
                 <tr>
                   <td><div class="data-table__food-name">Vegetable Pulao</div></td>
                   <td>Green Eats</td>
@@ -395,28 +263,7 @@
         </div>
         <div class="dashboard-panel">
           <div class="dashboard-panel__body">
-            <!-- TODO: Replace mock data with backend response -->
-            <div class="notification-item notification-item--unread" style="border-radius:var(--radius-lg);margin-bottom:0.5rem;">
-              <div class="notification-item__icon notification-item__icon--info">🚴</div>
-              <div class="notification-item__content">
-                <div class="notification-item__title">New pickup assigned — Chicken Biryani from Royal Kitchen</div>
-                <div class="notification-item__time">10 minutes ago</div>
-              </div>
-            </div>
-            <div class="notification-item notification-item--unread" style="border-radius:var(--radius-lg);margin-bottom:0.5rem;">
-              <div class="notification-item__icon notification-item__icon--success">🍛</div>
-              <div class="notification-item__content">
-                <div class="notification-item__title">New food available nearby for pickup</div>
-                <div class="notification-item__time">1 hour ago</div>
-              </div>
-            </div>
-            <div class="notification-item" style="border-radius:var(--radius-lg);margin-bottom:0.5rem;">
-              <div class="notification-item__icon notification-item__icon--success">✅</div>
-              <div class="notification-item__content">
-                <div class="notification-item__title">Delivery confirmed — Vegetable Pulao</div>
-                <div class="notification-item__time">Yesterday</div>
-              </div>
-            </div>
+            <!-- Handled dynamically by JS -->
           </div>
         </div>
       </div>
