@@ -831,8 +831,134 @@
     });
   };
 
+  // ===== Profile Handling =====
+  window.fetchUserProfile = function() {
+    fetch('../profile')
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch profile');
+        return res.json();
+      })
+      .then(user => {
+        // Update header
+        const headerName = document.getElementById('header-user-name');
+        const headerInitials = document.getElementById('header-avatar-initials');
+        if (headerName) headerName.textContent = user.name;
+        if (headerInitials) {
+          const names = user.name.split(' ');
+          headerInitials.textContent = names.length > 1 ? (names[0][0] + names[1][0]).toUpperCase() : user.name.substring(0, 2).toUpperCase();
+        }
+
+        // Update sidebar
+        const sidebarName = document.getElementById('sidebar-user-name');
+        const sidebarEmail = document.getElementById('sidebar-user-email');
+        if (sidebarName) sidebarName.textContent = user.name;
+        if (sidebarEmail) sidebarEmail.textContent = user.email;
+
+        // Update main dashboard welcome
+        const welcome = document.getElementById('dashboard-welcome');
+        if (welcome) welcome.textContent = 'Welcome back, ' + user.name.split(' ')[0] + '! Here\'s your overview.';
+
+        // Update profile page
+        const profileAvatar = document.getElementById('profile-card-avatar');
+        const profileName = document.getElementById('profile-card-name');
+        if (profileAvatar && headerInitials) profileAvatar.textContent = headerInitials.textContent;
+        if (profileName) profileName.textContent = user.name;
+
+        const pName = document.getElementById('profile-field-name');
+        const pEmail = document.getElementById('profile-field-email');
+        const pPhone = document.getElementById('profile-field-phone');
+        const pRole = document.getElementById('profile-field-role');
+        const pAddress = document.getElementById('profile-field-address');
+        
+        if (pName) pName.textContent = user.name;
+        if (pEmail) pEmail.textContent = user.email;
+        if (pPhone) pPhone.textContent = user.phone || 'Not provided';
+        
+        // Make role more readable if necessary
+        let displayRole = user.role;
+        if (user.role === 'PROVIDER') displayRole = 'Food Provider';
+        else if (user.role === 'NGO') displayRole = 'NGO / Organization';
+        else if (user.role === 'VOLUNTEER') displayRole = 'Volunteer';
+        
+        if (pRole) pRole.textContent = displayRole;
+        const roleBadge = document.getElementById('profile-card-role-badge');
+        if (roleBadge) roleBadge.textContent = displayRole;
+
+        if (pAddress) pAddress.textContent = user.address || 'Not provided';
+        
+        // Store user globally for editing
+        window.currentUserProfile = user;
+      })
+      .catch(err => console.error('Error fetching profile:', err));
+  };
+
+  window.openEditProfileModal = function() {
+    if (!window.currentUserProfile) return;
+    const user = window.currentUserProfile;
+    document.getElementById('edit-profile-name').value = user.name;
+    document.getElementById('edit-profile-email').value = user.email;
+    document.getElementById('edit-profile-phone').value = user.phone || '';
+    document.getElementById('edit-profile-address').value = user.address || '';
+    
+    const alertBox = document.getElementById('edit-profile-alert');
+    if (alertBox) alertBox.classList.add('d-none');
+    
+    const modal = new bootstrap.Modal(document.getElementById('editProfileModal'));
+    modal.show();
+  };
+
+  const editProfileForm = document.getElementById('edit-profile-form');
+  if (editProfileForm) {
+    editProfileForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const submitBtn = document.getElementById('edit-profile-submit');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Saving...';
+      
+      const formData = new URLSearchParams(new FormData(editProfileForm));
+      
+      fetch('../profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: formData.toString()
+      })
+      .then(res => {
+        if (!res.ok) throw new Error('Update failed');
+        return res.json();
+      })
+      .then(data => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Save Changes';
+        
+        const modal = bootstrap.Modal.getInstance(document.getElementById('editProfileModal'));
+        if (modal) modal.hide();
+        
+        if (typeof showToast === 'function') {
+          showToast('Profile updated successfully!', 'success');
+        } else {
+          alert('Profile updated successfully!');
+        }
+        // Refresh profile data on UI
+        fetchUserProfile();
+      })
+      .catch(err => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Save Changes';
+        const alertBox = document.getElementById('edit-profile-alert');
+        if (alertBox) {
+          alertBox.textContent = 'Failed to update profile. Please try again.';
+          alertBox.className = 'alert alert-danger';
+          alertBox.classList.remove('d-none');
+        }
+      });
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', function() {
     var path = window.location.pathname || '';
+    
+    // Always fetch user profile on dashboard load
+    fetchUserProfile();
 
     // Provider specific calls
     if (path.includes('/provider/')) {

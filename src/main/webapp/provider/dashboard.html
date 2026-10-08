@@ -85,8 +85,8 @@
 
         <!-- Profile -->
         <div style="display:flex;align-items:center;gap:0.75rem;cursor:pointer;">
-          <div style="width:36px;height:36px;border-radius:50%;background:var(--color-primary-light);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--color-primary);font-size:0.875rem;">AB</div>
-          <span style="font-size:0.875rem;font-weight:500;color:var(--color-text);">Arjun B.</span>
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--color-primary-light);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--color-primary);font-size:0.875rem;" id="header-avatar-initials"></div>
+          <span style="font-size:0.875rem;font-weight:500;color:var(--color-text);" id="header-user-name"></span>
         </div>
       </div>
     </div>
@@ -101,9 +101,9 @@
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar__header">
-        <span class="sidebar__role">🏪 Provider</span>
-        <div class="sidebar__user-name">Arjun Bhardwaj</div>
-        <div class="sidebar__user-email">arjun@restaurant.com</div>
+        <span class="sidebar__role" id="sidebar-role-display">🏪 Provider</span>
+        <div class="sidebar__user-name" id="sidebar-user-name"></div>
+        <div class="sidebar__user-email" id="sidebar-user-email"></div>
       </div>
 
       <nav class="sidebar__nav">
@@ -153,7 +153,7 @@
         <div class="dashboard__header">
           <div>
             <h1 class="dashboard__title">Provider Dashboard</h1>
-            <p class="dashboard__subtitle">Welcome back, Arjun! Here's your overview.</p>
+            <p class="dashboard__subtitle" id="dashboard-welcome">Welcome back! Here's your overview.</p>
           </div>
           <a href="#" class="btn btn-primary" onclick="showPage('add-food');return false;">
             ➕ Add Food Listing
@@ -468,36 +468,73 @@
 
         <div class="profile-card">
           <div class="profile-card__header">
-            <div class="profile-card__avatar">AB</div>
+            <div class="profile-card__avatar" id="profile-card-avatar"></div>
             <div>
-              <div class="profile-card__name">Arjun Bhardwaj</div>
-              <span class="badge badge-success profile-card__role">Provider</span>
+              <div class="profile-card__name" id="profile-card-name"></div>
+              <span class="badge badge-success profile-card__role" id="profile-card-role-badge">Provider</span>
             </div>
           </div>
           <div class="profile-card__body">
             <div class="profile-field">
               <div class="profile-field__label">Full Name</div>
-              <div class="profile-field__value">Arjun Bhardwaj</div>
+              <div class="profile-field__value" id="profile-field-name"></div>
             </div>
             <div class="profile-field">
               <div class="profile-field__label">Email</div>
-              <div class="profile-field__value">arjun@restaurant.com</div>
+              <div class="profile-field__value" id="profile-field-email"></div>
             </div>
             <div class="profile-field">
               <div class="profile-field__label">Phone</div>
-              <div class="profile-field__value">+91 9876543210</div>
+              <div class="profile-field__value" id="profile-field-phone"></div>
             </div>
             <div class="profile-field">
               <div class="profile-field__label">Role</div>
-              <div class="profile-field__value">Food Provider</div>
+              <div class="profile-field__value" id="profile-field-role"></div>
             </div>
             <div class="profile-field">
               <div class="profile-field__label">Address</div>
-              <div class="profile-field__value">ABC Restaurant, MI Road, Jaipur, Rajasthan</div>
+              <div class="profile-field__value" id="profile-field-address"></div>
             </div>
           </div>
           <div class="profile-card__footer">
-            <button class="btn btn-primary">Edit Profile</button>
+            <button class="btn btn-primary" onclick="openEditProfileModal()">Edit Profile</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Edit Profile Modal -->
+      <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <form id="edit-profile-form">
+              <div class="modal-header">
+                <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div id="edit-profile-alert" class="alert d-none"></div>
+                <div class="mb-3">
+                  <label for="edit-profile-name" class="form-label">Full Name</label>
+                  <input type="text" class="form-control" id="edit-profile-name" name="name" required>
+                </div>
+                <div class="mb-3">
+                  <label for="edit-profile-email" class="form-label">Email (Read Only)</label>
+                  <input type="email" class="form-control" id="edit-profile-email" disabled>
+                </div>
+                <div class="mb-3">
+                  <label for="edit-profile-phone" class="form-label">Phone</label>
+                  <input type="text" class="form-control" id="edit-profile-phone" name="phone">
+                </div>
+                <div class="mb-3">
+                  <label for="edit-profile-address" class="form-label">Address</label>
+                  <textarea class="form-control" id="edit-profile-address" name="address" rows="3"></textarea>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary" id="edit-profile-submit">Save Changes</button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
