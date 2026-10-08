@@ -753,29 +753,51 @@
       return;
     }
 
-    var form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '../ngo/claim-food';
-    form.style.display = 'none';
+    // Disable all claim buttons temporarily
+    var buttons = document.querySelectorAll('.food-card__actions button');
+    buttons.forEach(function(btn) { btn.disabled = true; });
 
-    var foodIdInput = document.createElement('input');
-    foodIdInput.type = 'hidden';
-    foodIdInput.name = 'foodId';
-    foodIdInput.value = foodId;
+    var params = new URLSearchParams();
+    params.append('foodId', foodId);
+    params.append('claimedQuantity', qNum);
 
-    var qtyInput = document.createElement('input');
-    qtyInput.type = 'hidden';
-    qtyInput.name = 'claimedQuantity';
-    qtyInput.value = qNum;
-
-    form.appendChild(foodIdInput);
-    form.appendChild(qtyInput);
-    document.body.appendChild(form);
-    form.submit();
+    fetch('../ngo/claim-food', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params.toString()
+    })
+    .then(function(response) {
+      if (response.ok || response.redirected) {
+        if (typeof showToast === 'function') {
+          showToast('Food claimed successfully! Status: PENDING', 'success');
+        } else {
+          alert('Food claimed successfully!');
+        }
+        // Refresh the available food list and claims
+        fetchNGOAvailableFood();
+        fetchNGOClaims();
+        // Switch to claims tab
+        showPage('claims');
+      } else {
+        return response.text().then(function(text) {
+          throw new Error('Server returned ' + response.status + ': ' + text);
+        });
+      }
+    })
+    .catch(function(error) {
+      console.error('Error claiming food:', error);
+      alert('Unable to claim food. Please try again or refresh the page.');
+    })
+    .finally(function() {
+      // Re-enable buttons
+      var buttons = document.querySelectorAll('.food-card__actions button');
+      buttons.forEach(function(btn) { btn.disabled = false; });
+    });
   };
   // ===== Fetch NGO Claims =====
   function fetchNGOClaims() {
     var claimsTbody = document.getElementById('ngo-claims-tbody');
+    var pickupsTbody = document.getElementById('ngo-pickups-tbody');
     if (!claimsTbody) return;
 
     fetch('../ngo/claims')
@@ -785,16 +807,30 @@
       })
       .then(function(data) {
         var html = '';
-        if (data.length === 0) {
+        var pickupsHtml = '';
+        var activeCount = 0;
+        var completedCount = 0;
+        var pendingPickupCount = 0;
+
+        if (!data || data.length === 0) {
           html = '<tr><td colspan="5" style="text-align:center;padding:2rem;">No claims found.</td></tr>';
+          pickupsHtml = '<tr><td colspan="4" style="text-align:center;padding:2rem;">No pickups found.</td></tr>';
         } else {
           data.forEach(function(claim) {
+            var status = (claim.status || '').toUpperCase();
+            
+            // Stats logic
+            if (status === 'PENDING' || status === 'APPROVED') { activeCount++; }
+            else if (status === 'READY_FOR_PICKUP' || status === 'ACCEPTED') { activeCount++; pendingPickupCount++; }
+            else if (status === 'PICKED_UP') { pendingPickupCount++; }
+            else if (status === 'DELIVERED') { completedCount++; }
+
+            // My Claims Table
             html += '<tr>';
             html += '  <td><div class="data-table__food-name">' + claim.foodName + '</div></td>';
             html += '  <td>' + (claim.providerName || '-') + '</td>';
             html += '  <td>' + claim.claimedQuantity + ' ' + (claim.unit || '') + '</td>';
 
-            var status = (claim.status || '').toUpperCase();
             var badgeClass = 'badge-info';
             if (status === 'PENDING' || status === 'AWAITING PICKUP') badgeClass = 'badge-warning';
             else if (status === 'APPROVED' || status === 'READY_FOR_PICKUP') badgeClass = 'badge-success';
@@ -804,13 +840,37 @@
             html += '  <td><span class="badge ' + badgeClass + '">' + status + '</span></td>';
             html += '  <td><button class="btn btn-sm btn-secondary">Details</button></td>';
             html += '</tr>';
+
+            // Pickups Table (Only show READY_FOR_PICKUP and beyond)
+            if (status === 'READY_FOR_PICKUP' || status === 'ACCEPTED' || status === 'PICKED_UP' || status === 'DELIVERED') {
+              pickupsHtml += '<tr>';
+              pickupsHtml += '  <td><div class="data-table__food-name">' + claim.foodName + '</div></td>';
+              pickupsHtml += '  <td>' + (status === 'READY_FOR_PICKUP' ? '-' : 'Assigned') + '</td>'; // We don't have volunteer info in DTO
+              pickupsHtml += '  <td>' + (claim.providerName || '-') + '</td>';
+              pickupsHtml += '  <td><span class="badge ' + badgeClass + '">' + status + '</span></td>';
+              pickupsHtml += '</tr>';
+            }
           });
+          
+          if (pickupsHtml === '') {
+            pickupsHtml = '<tr><td colspan="4" style="text-align:center;padding:2rem;">No pickups found.</td></tr>';
+          }
         }
         claimsTbody.innerHTML = html;
+        if (pickupsTbody) pickupsTbody.innerHTML = pickupsHtml;
+
+        // Update stats
+        var statActive = document.getElementById('ngo-stat-active-claims');
+        var statCompleted = document.getElementById('ngo-stat-completed-claims');
+        var statPending = document.getElementById('ngo-stat-pending-pickups');
+        if (statActive) statActive.textContent = activeCount;
+        if (statCompleted) statCompleted.textContent = completedCount;
+        if (statPending) statPending.textContent = pendingPickupCount;
       })
       .catch(function(error) {
         console.error('Error fetching NGO claims:', error);
         claimsTbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:red;">Error loading claims.</td></tr>';
+        if (pickupsTbody) pickupsTbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:red;">Error loading pickups.</td></tr>';
       });
   }
 
@@ -1084,7 +1144,14 @@
         // Store user globally for editing
         window.currentUserProfile = user;
       })
-      .catch(err => console.error('Error fetching profile:', err));
+      .catch(err => {
+        console.error('Error fetching profile:', err);
+        const headerName = document.getElementById('header-user-name');
+        if (headerName) headerName.textContent = 'Error loading profile';
+        if (typeof showToast === 'function') {
+          showToast('Unable to load profile data. Please refresh.', 'danger');
+        }
+      });
   };
 
   window.openEditProfileModal = function() {
