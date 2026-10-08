@@ -259,12 +259,52 @@
               </div>
               <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
                 <div class="form-group">
-                  <label for="food-prepared" class="form-label">Prepared At</label>
-                  <input type="datetime-local" id="food-prepared" name="preparedAt" class="form-input" required>
+                  <label class="form-label">Prepared At</label>
+                  <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                    <input type="date" id="add-prepared-date" class="form-input" style="flex:1;min-width:130px;" required>
+                    <div style="display:flex;gap:0.25rem;align-items:center;">
+                      <select id="add-prepared-hour" class="form-input" style="padding:0.5rem 0.25rem;width:60px;"></select>
+                      <span>:</span>
+                      <select id="add-prepared-minute" class="form-input" style="padding:0.5rem 0.25rem;width:60px;"></select>
+                      <select id="add-prepared-ampm" class="form-input" style="padding:0.5rem 0.25rem;width:65px;">
+                        <option value="AM">AM</option>
+                        <option value="PM">PM</option>
+                      </select>
+                    </div>
+                  </div>
+                  <input type="hidden" id="food-prepared" name="preparedAt">
                 </div>
                 <div class="form-group">
-                  <label for="food-expiry" class="form-label">Expiry Time</label>
-                  <input type="datetime-local" id="food-expiry" name="expiryTime" class="form-input" required>
+                  <label class="form-label">Expires In</label>
+                  <select id="add-expires-in" class="form-input">
+                    <option value="1">1 Hour</option>
+                    <option value="2">2 Hours</option>
+                    <option value="4" selected>4 Hours</option>
+                    <option value="6">6 Hours</option>
+                    <option value="12">12 Hours</option>
+                    <option value="24">24 Hours</option>
+                    <option value="48">2 Days</option>
+                    <option value="custom">Custom</option>
+                  </select>
+                
+                  <div id="add-custom-expiry-container" style="display:none;margin-top:0.5rem;gap:0.5rem;flex-wrap:wrap;">
+                    <input type="date" id="add-custom-date" class="form-input" style="flex:1;min-width:130px;">
+                    <div style="display:flex;gap:0.25rem;align-items:center;">
+                      <select id="add-custom-hour" class="form-input" style="padding:0.5rem 0.25rem;width:60px;"></select>
+                      <span>:</span>
+                      <select id="add-custom-minute" class="form-input" style="padding:0.5rem 0.25rem;width:60px;"></select>
+                      <select id="add-custom-ampm" class="form-input" style="padding:0.5rem 0.25rem;width:65px;">
+                        <option value="AM">AM</option>
+                        <option value="PM">PM</option>
+                      </select>
+                    </div>
+                  </div>
+                
+                  <div style="margin-top:0.5rem;font-size:0.875rem;color:var(--color-text);">
+                    Expires At: <strong id="add-expires-at-preview">--</strong>
+                    <div id="add-expiry-error" style="display:none;margin-top:0.25rem;color:#dc3545;">Expiry time must be after the prepared time.</div>
+                  </div>
+                  <input type="hidden" id="food-expiry" name="expiryTime">
                 </div>
               </div>
               <div class="form-group">
@@ -319,12 +359,52 @@
               </div>
               <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
                 <div class="form-group">
-                  <label for="edit-food-prepared" class="form-label">Prepared At</label>
-                  <input type="datetime-local" id="edit-food-prepared" name="preparedAt" class="form-input" required>
+                  <label class="form-label">Prepared At</label>
+                  <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                    <input type="date" id="edit-prepared-date" class="form-input" style="flex:1;min-width:130px;" required>
+                    <div style="display:flex;gap:0.25rem;align-items:center;">
+                      <select id="edit-prepared-hour" class="form-input" style="padding:0.5rem 0.25rem;width:60px;"></select>
+                      <span>:</span>
+                      <select id="edit-prepared-minute" class="form-input" style="padding:0.5rem 0.25rem;width:60px;"></select>
+                      <select id="edit-prepared-ampm" class="form-input" style="padding:0.5rem 0.25rem;width:65px;">
+                        <option value="AM">AM</option>
+                        <option value="PM">PM</option>
+                      </select>
+                    </div>
+                  </div>
+                  <input type="hidden" id="edit-food-prepared" name="preparedAt">
                 </div>
                 <div class="form-group">
-                  <label for="edit-food-expiry" class="form-label">Expiry Time</label>
-                  <input type="datetime-local" id="edit-food-expiry" name="expiryTime" class="form-input" required>
+                  <label class="form-label">Expires In</label>
+                  <select id="edit-expires-in" class="form-input">
+                    <option value="1">1 Hour</option>
+                    <option value="2">2 Hours</option>
+                    <option value="4">4 Hours</option>
+                    <option value="6">6 Hours</option>
+                    <option value="12">12 Hours</option>
+                    <option value="24">24 Hours</option>
+                    <option value="48">2 Days</option>
+                    <option value="custom">Custom</option>
+                  </select>
+                
+                  <div id="edit-custom-expiry-container" style="display:none;margin-top:0.5rem;gap:0.5rem;flex-wrap:wrap;">
+                    <input type="date" id="edit-custom-date" class="form-input" style="flex:1;min-width:130px;">
+                    <div style="display:flex;gap:0.25rem;align-items:center;">
+                      <select id="edit-custom-hour" class="form-input" style="padding:0.5rem 0.25rem;width:60px;"></select>
+                      <span>:</span>
+                      <select id="edit-custom-minute" class="form-input" style="padding:0.5rem 0.25rem;width:60px;"></select>
+                      <select id="edit-custom-ampm" class="form-input" style="padding:0.5rem 0.25rem;width:65px;">
+                        <option value="AM">AM</option>
+                        <option value="PM">PM</option>
+                      </select>
+                    </div>
+                  </div>
+                
+                  <div style="margin-top:0.5rem;font-size:0.875rem;color:var(--color-text);">
+                    Expires At: <strong id="edit-expires-at-preview">--</strong>
+                    <div id="edit-expiry-error" style="display:none;margin-top:0.25rem;color:#dc3545;">Expiry time must be after the prepared time.</div>
+                  </div>
+                  <input type="hidden" id="edit-food-expiry" name="expiryTime">
                 </div>
               </div>
               <div class="form-group">

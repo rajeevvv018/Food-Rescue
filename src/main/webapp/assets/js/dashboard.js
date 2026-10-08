@@ -598,15 +598,39 @@
     document.getElementById('edit-food-quantity').value = listing.quantity || '';
     document.getElementById('edit-food-unit').value = listing.unit || '';
 
+    var prepDate = new Date();
     if (listing.preparedAt) {
-      document.getElementById('edit-food-prepared').value = listing.preparedAt.replace(' ', 'T');
-    } else {
-      document.getElementById('edit-food-prepared').value = '';
+      prepDate = new Date(listing.preparedAt.replace(' ', 'T'));
     }
-    if (listing.expiryTime) {
-      document.getElementById('edit-food-expiry').value = listing.expiryTime.replace(' ', 'T');
-    } else {
-      document.getElementById('edit-food-expiry').value = '';
+    
+    if (typeof setUIToJsDate === 'function') {
+      setUIToJsDate('edit-prepared', prepDate);
+
+      var expDate = null;
+      if (listing.expiryTime) {
+        expDate = new Date(listing.expiryTime.replace(' ', 'T'));
+      }
+
+      var expiresInSel = document.getElementById('edit-expires-in');
+      if (expDate && expiresInSel) {
+        var diffMs = expDate.getTime() - prepDate.getTime();
+        var diffHours = diffMs / (1000 * 60 * 60);
+        var validDurations = [1, 2, 4, 6, 12, 24, 48];
+        
+        if (validDurations.indexOf(diffHours) !== -1) {
+          expiresInSel.value = diffHours;
+          var customContainer = document.getElementById('edit-custom-expiry-container');
+          if (customContainer) customContainer.style.display = 'none';
+        } else {
+          expiresInSel.value = 'custom';
+          setUIToJsDate('edit-custom', expDate);
+          var customContainer = document.getElementById('edit-custom-expiry-container');
+          if (customContainer) customContainer.style.display = 'flex';
+        }
+      }
+      if (typeof updateExpiryPreview === 'function') {
+        updateExpiryPreview('edit');
+      }
     }
 
     document.getElementById('edit-food-pickup').value = listing.pickupAddress || '';
@@ -1216,6 +1240,174 @@
     });
   }
 
+  // ===== 12-Hour DateTime UI Logic =====
+  function padZero(n) { return n < 10 ? '0' + n : '' + n; }
+
+  window.populateTimeDropdowns = function(prefix) {
+    var hourSelect = document.getElementById(prefix + '-hour');
+    var minSelect = document.getElementById(prefix + '-minute');
+    if (!hourSelect || !minSelect) return;
+    
+    hourSelect.innerHTML = '';
+    for (var i = 1; i <= 12; i++) {
+      var val = padZero(i);
+      hourSelect.add(new Option(val, val));
+    }
+    
+    minSelect.innerHTML = '';
+    for (var i = 0; i < 60; i += 1) {
+      var val = padZero(i);
+      minSelect.add(new Option(val, val));
+    }
+  };
+
+  window.getBackendFormat = function(dateStr, hourStr, minStr, ampmStr) {
+    if (!dateStr || !hourStr || !minStr || !ampmStr) return '';
+    var h = parseInt(hourStr, 10);
+    if (ampmStr === 'PM' && h !== 12) h += 12;
+    if (ampmStr === 'AM' && h === 12) h = 0;
+    return dateStr + 'T' + padZero(h) + ':' + minStr;
+  };
+  
+  window.getJsDateFromUI = function(prefix) {
+    var ds = document.getElementById(prefix + '-date').value;
+    var hs = document.getElementById(prefix + '-hour').value;
+    var ms = document.getElementById(prefix + '-minute').value;
+    var ap = document.getElementById(prefix + '-ampm').value;
+    var iso = getBackendFormat(ds, hs, ms, ap);
+    if (!iso) return null;
+    return new Date(iso);
+  };
+
+  window.setUIToJsDate = function(prefix, dateObj) {
+    if (!dateObj || isNaN(dateObj.getTime())) return;
+    document.getElementById(prefix + '-date').value = dateObj.getFullYear() + '-' + padZero(dateObj.getMonth() + 1) + '-' + padZero(dateObj.getDate());
+    
+    var h = dateObj.getHours();
+    var ap = h >= 12 ? 'PM' : 'AM';
+    var h12 = h % 12;
+    if (h12 === 0) h12 = 12;
+    
+    document.getElementById(prefix + '-hour').value = padZero(h12);
+    document.getElementById(prefix + '-minute').value = padZero(dateObj.getMinutes());
+    document.getElementById(prefix + '-ampm').value = ap;
+  };
+
+  window.formatDisplayDateTime = function(dateObj) {
+    if (!dateObj || isNaN(dateObj.getTime())) return '--';
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var d = padZero(dateObj.getDate());
+    var m = months[dateObj.getMonth()];
+    var y = dateObj.getFullYear();
+    
+    var h = dateObj.getHours();
+    var ap = h >= 12 ? 'PM' : 'AM';
+    var h12 = h % 12;
+    if (h12 === 0) h12 = 12;
+    var mins = padZero(dateObj.getMinutes());
+    
+    return d + ' ' + m + ' ' + y + ', ' + padZero(h12) + ':' + mins + ' ' + ap;
+  };
+
+  window.updateExpiryPreview = function(prefix) {
+    var prepDate = getJsDateFromUI(prefix + '-prepared');
+    var expiresInEl = document.getElementById(prefix + '-expires-in');
+    var customContainer = document.getElementById(prefix + '-custom-expiry-container');
+    var previewText = document.getElementById(prefix + '-expires-at-preview');
+    var errorText = document.getElementById(prefix + '-expiry-error');
+    
+    var hiddenPrefix = prefix === 'add' ? 'food' : 'edit-food';
+    var hiddenPrepared = document.getElementById(hiddenPrefix + '-prepared');
+    var hiddenExpiry = document.getElementById(hiddenPrefix + '-expiry');
+    
+    if (!expiresInEl || !previewText || !errorText) return;
+    
+    var expiresIn = expiresInEl.value;
+    errorText.style.display = 'none';
+    
+    if (!prepDate) {
+      previewText.textContent = '--';
+      return;
+    }
+    
+    var expDate = null;
+    if (expiresIn === 'custom') {
+      if (customContainer) customContainer.style.display = 'flex';
+      expDate = getJsDateFromUI(prefix + '-custom');
+    } else {
+      if (customContainer) customContainer.style.display = 'none';
+      var hours = parseInt(expiresIn, 10);
+      expDate = new Date(prepDate.getTime() + hours * 60 * 60 * 1000);
+    }
+    
+    if (expDate && !isNaN(expDate.getTime())) {
+      previewText.textContent = formatDisplayDateTime(expDate);
+      
+      var prepIso = getBackendFormat(
+        document.getElementById(prefix + '-prepared-date').value,
+        document.getElementById(prefix + '-prepared-hour').value,
+        document.getElementById(prefix + '-prepared-minute').value,
+        document.getElementById(prefix + '-prepared-ampm').value
+      );
+      if (hiddenPrepared) hiddenPrepared.value = prepIso;
+      
+      if (expiresIn === 'custom') {
+        var expIso = getBackendFormat(
+          document.getElementById(prefix + '-custom-date').value,
+          document.getElementById(prefix + '-custom-hour').value,
+          document.getElementById(prefix + '-custom-minute').value,
+          document.getElementById(prefix + '-custom-ampm').value
+        );
+        if (hiddenExpiry) hiddenExpiry.value = expIso;
+      } else {
+        var h = expDate.getHours();
+        if (hiddenExpiry) hiddenExpiry.value = expDate.getFullYear() + '-' + padZero(expDate.getMonth()+1) + '-' + padZero(expDate.getDate()) + 'T' + padZero(h) + ':' + padZero(expDate.getMinutes());
+      }
+      
+      if (expDate <= prepDate) {
+        errorText.style.display = 'block';
+      }
+    } else {
+      previewText.textContent = '--';
+    }
+  };
+
+  window.initDateTimeUI = function(prefix) {
+    var prepDateInput = document.getElementById(prefix + '-prepared-date');
+    if (!prepDateInput) return;
+    
+    populateTimeDropdowns(prefix + '-prepared');
+    populateTimeDropdowns(prefix + '-custom');
+    
+    var elements = [
+      prefix + '-prepared-date', prefix + '-prepared-hour', prefix + '-prepared-minute', prefix + '-prepared-ampm',
+      prefix + '-expires-in',
+      prefix + '-custom-date', prefix + '-custom-hour', prefix + '-custom-minute', prefix + '-custom-ampm'
+    ];
+    
+    elements.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('change', function() { updateExpiryPreview(prefix); });
+        el.addEventListener('input', function() { updateExpiryPreview(prefix); });
+      }
+    });
+  };
+
+  window.preventInvalidExpiry = function(e, prefix) {
+    var prepDate = getJsDateFromUI(prefix + '-prepared');
+    var expiresIn = document.getElementById(prefix + '-expires-in').value;
+    var expDate = expiresIn === 'custom' ? getJsDateFromUI(prefix + '-custom') : new Date(prepDate.getTime() + parseInt(expiresIn, 10) * 60 * 60 * 1000);
+    
+    if (expDate <= prepDate) {
+      e.preventDefault();
+      var err = document.getElementById(prefix + '-expiry-error');
+      if (err) err.style.display = 'block';
+      return false;
+    }
+    return true;
+  };
+
   document.addEventListener('DOMContentLoaded', function() {
     var path = window.location.pathname || '';
     
@@ -1227,6 +1419,23 @@
 
     // Provider specific calls
     if (path.includes('/provider/')) {
+      if (document.getElementById('add-prepared-date')) {
+        initDateTimeUI('add');
+        setUIToJsDate('add-prepared', new Date());
+        updateExpiryPreview('add');
+        var addForm = document.getElementById('add-food-form');
+        if (addForm) {
+          addForm.addEventListener('submit', function(e) { preventInvalidExpiry(e, 'add'); });
+        }
+      }
+      if (document.getElementById('edit-prepared-date')) {
+        initDateTimeUI('edit');
+        var editForm = document.getElementById('edit-food-form');
+        if (editForm) {
+          editForm.addEventListener('submit', function(e) { preventInvalidExpiry(e, 'edit'); });
+        }
+      }
+      
       if (document.getElementById('recent-listings-tbody')) {
         fetchProviderListings();
       }
