@@ -1,5 +1,5 @@
-/**
- * FoodRescue — Dashboard JavaScript
+﻿/**
+ * FoodRescue â€” Dashboard JavaScript
  * Sidebar navigation, page switching, notification dropdown,
  * mobile sidebar toggle, and shared dashboard interactions.
  * Handles UI logic for Provider, NGO, and Volunteer dashboards.
@@ -114,9 +114,9 @@
     var notifList = document.querySelector('.notification-panel__list');
     var pageNotifContainer = document.getElementById('notifications-container');
     var countBadge = document.getElementById('notification-count');
-    
+
     // Fetch unread count
-    fetch('../notifications?action=unreadCount')
+    apiFetch('../notifications?action=unreadCount')
       .then(function(res) { return res.json(); })
       .then(function(data) {
         if (data && typeof data.unreadCount === 'number') {
@@ -134,10 +134,10 @@
       }).catch(function(e) { console.error('Error fetching unread count', e); });
 
     // Fetch notifications list
-    fetch('../notifications')
-      .then(function(res) { 
+    apiFetch('../notifications')
+      .then(function(res) {
         if(!res.ok) throw new Error('Failed to load notifications');
-        return res.json(); 
+        return res.json();
       })
       .then(function(data) {
         if (notifList) {
@@ -147,20 +147,20 @@
         if (data && data.length > 0) {
           data.forEach(function(n) {
             // Determine Icon based on type
-            var icon = '🔔';
+            var icon = 'ðŸ””';
             var iconClass = 'notification-item__icon--info';
             var tstr = (n.title || n.message || '').toUpperCase();
-            if (tstr.includes('APPROVED')) { icon = '✅'; iconClass = 'notification-item__icon--success'; }
-            else if (tstr.includes('PICKUP') || tstr.includes('VOLUNTEER') || tstr.includes('ACCEPTED')) { icon = '🚴'; iconClass = 'notification-item__icon--info'; }
-            else if (tstr.includes('EXPIRE') || tstr.includes('WARNING') || tstr.includes('REJECTED')) { icon = '⏰'; iconClass = 'notification-item__icon--warning'; }
-            else if (tstr.includes('DELIVERED')) { icon = '📦'; iconClass = 'notification-item__icon--success'; }
-            else if (tstr.includes('CLAIM')) { icon = '✋'; iconClass = 'notification-item__icon--info'; }
+            if (tstr.includes('APPROVED')) { icon = 'âœ…'; iconClass = 'notification-item__icon--success'; }
+            else if (tstr.includes('PICKUP') || tstr.includes('VOLUNTEER') || tstr.includes('ACCEPTED')) { icon = 'ðŸš´'; iconClass = 'notification-item__icon--info'; }
+            else if (tstr.includes('EXPIRE') || tstr.includes('WARNING') || tstr.includes('REJECTED')) { icon = 'â°'; iconClass = 'notification-item__icon--warning'; }
+            else if (tstr.includes('DELIVERED')) { icon = 'ðŸ“¦'; iconClass = 'notification-item__icon--success'; }
+            else if (tstr.includes('CLAIM')) { icon = 'âœ‹'; iconClass = 'notification-item__icon--info'; }
 
             var unreadClass = n.isRead ? '' : 'notification-item--unread';
             var dotHtml = n.isRead ? '' : '<div class="notification-item__dot"></div>';
             var timeHtml = n.createdAt ? '<div class="notification-item__time">' + n.createdAt + '</div>' : '';
 
-            var itemHtml = 
+            var itemHtml =
               '<div class="notification-item ' + unreadClass + '">' +
                 '<div class="notification-item__icon ' + iconClass + '">' + icon + '</div>' +
                 '<div class="notification-item__content">' +
@@ -173,10 +173,10 @@
             if (notifList) {
               notifList.innerHTML += itemHtml;
             }
-            
+
             // Build larger card for the notifications page
             var cardBorder = n.isRead ? 'border-left: 4px solid var(--color-border);' : 'border-left: 4px solid var(--color-primary);';
-            pageHtml += 
+            pageHtml +=
               '<div style="padding: 1rem; border-bottom: 1px solid var(--color-border); ' + cardBorder + ' background: ' + (n.isRead ? 'transparent' : 'var(--color-background-alt)') + ';">' +
                 '<div style="display: flex; align-items: flex-start; gap: 1rem;">' +
                   '<div style="font-size: 1.5rem;">' + icon + '</div>' +
@@ -199,8 +199,8 @@
           pageNotifContainer.innerHTML = pageHtml;
         }
       })
-      .catch(function(e) { 
-        console.error('Error fetching notifications', e); 
+      .catch(function(e) {
+        console.error('Error fetching notifications', e);
         if (notifList) {
           notifList.innerHTML = '<div style="padding:1rem;text-align:center;color:red;">Error loading notifications</div>';
         }
@@ -215,7 +215,7 @@
   if (markAllReadBtn) {
     markAllReadBtn.addEventListener('click', function (e) {
       e.preventDefault();
-      fetch('../notifications?action=markAllRead', { method: 'POST' })
+      apiFetch('../notifications?action=markAllRead', { method: 'POST' })
         .then(function(res) { return res.json(); })
         .then(function(data) {
           if (data && data.success) {
@@ -271,20 +271,20 @@
     }
 
     var icons = {
-      success: '✅',
-      warning: '⚠️',
-      danger: '❌',
-      info: 'ℹ️'
+      success: 'âœ…',
+      warning: 'âš ï¸',
+      danger: 'âŒ',
+      info: 'â„¹ï¸'
     };
 
     var toast = document.createElement('div');
     toast.className = 'toast toast-' + type;
     toast.innerHTML =
-      '<span class="toast-icon">' + (icons[type] || '✅') + '</span>' +
+      '<span class="toast-icon">' + (icons[type] || 'âœ…') + '</span>' +
       '<div class="toast-content">' +
         '<div class="toast-title">' + message + '</div>' +
       '</div>' +
-      '<button class="toast-close" onclick="this.parentElement.remove()">✕</button>';
+      '<button class="toast-close" onclick="this.parentElement.remove()">âœ•</button>';
 
     container.appendChild(toast);
 
@@ -317,7 +317,7 @@
     container.classList.add('hidden');
     tbody.innerHTML = '';
 
-    fetch('../provider/claims')
+    apiFetch('../provider/claims')
       .then(function(response) {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -450,7 +450,7 @@
     formData.append('claimId', claimId);
     formData.append('action', action);
 
-    fetch('../provider/claim-action', {
+    apiFetch('../provider/claim-action', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -492,7 +492,7 @@
 
     if (!recentTbody && !allTbody && !activeCountBadge) return;
 
-    fetch('../provider/listings')
+    apiFetch('../provider/listings')
       .then(function(response) {
         if (!response.ok) throw new Error('Network error');
         return response.json();
@@ -523,7 +523,7 @@
               recentRows += '<tr>';
               recentRows += '  <td>';
               recentRows += '    <div class="data-table__food-info">';
-              recentRows += '      <div style="font-size:1.5rem;margin-right:1rem;">🍱</div>';
+              recentRows += '      <div style="font-size:1.5rem;margin-right:1rem;">ðŸ±</div>';
               recentRows += '      <div>';
               recentRows += '        <div class="data-table__food-name">' + listing.foodName + '</div>';
               recentRows += '        <div class="data-table__food-provider">Added ' + (listing.createdAt || 'recently') + '</div>';
@@ -563,7 +563,7 @@
               allRows += '<tr>';
               allRows += '  <td>';
               allRows += '    <div class="data-table__food-info">';
-              allRows += '      <div style="font-size:1.5rem;margin-right:1rem;">🍱</div>';
+              allRows += '      <div style="font-size:1.5rem;margin-right:1rem;">ðŸ±</div>';
               allRows += '      <div>';
               allRows += '        <div class="data-table__food-name">' + listing.foodName + '</div>';
               allRows += '      </div>';
@@ -602,7 +602,7 @@
     if (listing.preparedAt) {
       prepDate = new Date(listing.preparedAt.replace(' ', 'T'));
     }
-    
+
     if (typeof setUIToJsDate === 'function') {
       setUIToJsDate('edit-prepared', prepDate);
 
@@ -616,7 +616,7 @@
         var diffMs = expDate.getTime() - prepDate.getTime();
         var diffHours = diffMs / (1000 * 60 * 60);
         var validDurations = [1, 2, 4, 6, 12, 24, 48];
-        
+
         if (validDurations.indexOf(diffHours) !== -1) {
           expiresInSel.value = diffHours;
           var customContainer = document.getElementById('edit-custom-expiry-container');
@@ -644,7 +644,7 @@
     var tbody = document.getElementById('provider-pickups-tbody');
     if (!tbody) return;
 
-    fetch('../provider/claims')
+    apiFetch('../provider/claims')
       .then(function(response) {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -656,11 +656,11 @@
         var hasPickups = false;
 
         data.forEach(function(claim) {
-          if (claim.status === 'READY_FOR_PICKUP' || claim.status === 'ACCEPTED' || 
+          if (claim.status === 'READY_FOR_PICKUP' || claim.status === 'ACCEPTED' ||
               claim.status === 'PICKED_UP' || claim.status === 'DELIVERED') {
             hasPickups = true;
             var tr = document.createElement('tr');
-            
+
             var tdFood = document.createElement('td');
             var divFood = document.createElement('div');
             divFood.className = 'data-table__food-name';
@@ -719,7 +719,7 @@
 
     if (!recentAvailableTbody && !allAvailableTbody) return;
 
-    fetch('../ngo/available-food')
+    apiFetch('../ngo/available-food')
       .then(function(response) {
         if (!response.ok) throw new Error('Network error');
         return response.json();
@@ -734,10 +734,12 @@
               html += '<tr>';
               html += '  <td>';
               html += '    <div class="data-table__food-info">';
-              html += '      <div style="font-size:1.5rem;margin-right:1rem;">🍛</div>';
+              html += '      <div style="font-size:1.5rem;margin-right:1rem;">ðŸ›</div>';
               html += '      <div>';
               html += '        <div class="data-table__food-name">' + listing.foodName + '</div>';
               html += '        <div class="data-table__food-provider">Added ' + (listing.createdAt || 'recently') + '</div>';
+              var shortDesc = listing.description ? (listing.description.length > 50 ? listing.description.substring(0, 50) + '...' : listing.description) : 'No description';
+              html += '        <div style="font-size:0.85rem;color:#777;margin-top:0.25rem;">' + shortDesc + '</div>';
               html += '      </div>';
               html += '    </div>';
               html += '  </td>';
@@ -785,7 +787,7 @@
     params.append('foodId', foodId);
     params.append('claimedQuantity', qNum);
 
-    fetch('../ngo/claim-food', {
+    apiFetch('../ngo/claim-food', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: params.toString()
@@ -824,12 +826,13 @@
     var pickupsTbody = document.getElementById('ngo-pickups-tbody');
     if (!claimsTbody) return;
 
-    fetch('../ngo/claims')
+    apiFetch('../ngo/claims')
       .then(function(response) {
         if (!response.ok) throw new Error('Network error');
         return response.json();
       })
       .then(function(data) {
+        window.ngoClaimsData = data;
         var html = '';
         var pickupsHtml = '';
         var activeCount = 0;
@@ -842,7 +845,7 @@
         } else {
           data.forEach(function(claim) {
             var status = (claim.status || '').toUpperCase();
-            
+
             // Stats logic
             if (status === 'PENDING' || status === 'APPROVED') { activeCount++; }
             else if (status === 'READY_FOR_PICKUP' || status === 'ACCEPTED') { activeCount++; pendingPickupCount++; }
@@ -862,7 +865,7 @@
             else if (status === 'REJECTED') badgeClass = 'badge-danger';
 
             html += '  <td><span class="badge ' + badgeClass + '">' + status + '</span></td>';
-            html += '  <td><button class="btn btn-sm btn-secondary">Details</button></td>';
+            html += '  <td><button class="btn btn-sm btn-secondary" onclick="showClaimDetails(' + claim.claimId + ')">Details</button></td>';
             html += '</tr>';
 
             // Pickups Table (Only show READY_FOR_PICKUP and beyond)
@@ -875,7 +878,7 @@
               pickupsHtml += '</tr>';
             }
           });
-          
+
           if (pickupsHtml === '') {
             pickupsHtml = '<tr><td colspan="4" style="text-align:center;padding:2rem;">No pickups found.</td></tr>';
           }
@@ -898,12 +901,44 @@
       });
   }
 
+  window.showClaimDetails = function(claimId) {
+    if (!window.ngoClaimsData) return;
+    var claim = window.ngoClaimsData.find(function(c) { return c.claimId === claimId; });
+    if (!claim) return;
+
+    var content = document.getElementById('claim-details-content');
+    if (!content) return;
+
+    var getRow = function(label, value) {
+      return '<div style="display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding-bottom:0.5rem;">' +
+             '<strong style="color:#555;">' + label + ':</strong>' +
+             '<span style="color:#333;text-align:right;">' + (value || '-') + '</span>' +
+             '</div>';
+    };
+
+    var html = getRow('Food Name', claim.foodName);
+    html += getRow('Description', claim.description);
+    html += getRow('Food Type', claim.foodType);
+    html += getRow('Claimed Quantity', claim.claimedQuantity + ' ' + (claim.unit || ''));
+    html += getRow('Provider', claim.providerName);
+    html += getRow('Pickup Address', claim.pickupAddress);
+    html += getRow('Prepared At', claim.preparedAt);
+    html += getRow('Expiry Time', claim.expiryTime);
+    html += getRow('Claim Status', '<span class="badge badge-info">' + claim.status + '</span>');
+    html += getRow('Claimed On', claim.claimedAt);
+
+    content.innerHTML = html;
+
+    var modal = new bootstrap.Modal(document.getElementById('claimDetailsModal'));
+    modal.show();
+  };
+
   // ===== Volunteer Dashboard Integration =====
   window.fetchVolunteerAvailablePickups = function() {
     var container = document.querySelector('#page-available .dashboard-panel__body');
     if (!container) return; // Not on volunteer dashboard
 
-    fetch('../volunteer/available-pickups')
+    apiFetch('../volunteer/available-pickups')
       .then(function(res) {
         if (!res.ok) throw new Error('Network error');
         return res.json();
@@ -920,10 +955,10 @@
             html += '    <span class="badge badge-success">Open</span>';
             html += '  </div>';
             html += '  <div class="pickup-card__meta">';
-            html += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">🏪</span><span>' + item.providerName + '</span></div>';
-            html += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">🏢</span><span>' + item.ngoName + '</span></div>';
-            html += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">📍</span><span>' + item.pickupAddress + '</span></div>';
-            html += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">⏰</span><span>Expires: ' + item.expiryTime + '</span></div>';
+            html += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">ðŸª</span><span>' + item.providerName + '</span></div>';
+            html += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">ðŸ¢</span><span>' + item.ngoName + '</span></div>';
+            html += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">ðŸ“</span><span>' + item.pickupAddress + '</span></div>';
+            html += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">â°</span><span>Expires: ' + item.expiryTime + '</span></div>';
             html += '  </div>';
             html += '  <div class="pickup-card__actions">';
             html += '    <button class="btn btn-primary btn-sm" onclick="handlePickupAction(' + item.claimId + ', \'ACCEPT\', this)">Accept Pickup</button>';
@@ -952,7 +987,7 @@
     var historyTbody = document.getElementById('volunteer-history-tbody');
     if (!tbody || !activeContainer) return;
 
-    fetch('../volunteer/my-pickups')
+    apiFetch('../volunteer/my-pickups')
       .then(function(res) {
         if (!res.ok) throw new Error('Network error');
         return res.json();
@@ -980,9 +1015,9 @@
             trHtml += '  <td>' + pickup.ngoName + '</td>';
             trHtml += '  <td>' + (pickup.pickupTime ? pickup.pickupTime.split(' ')[0] : 'N/A') + '</td>';
             trHtml += '  <td><span class="badge ' + statusClass + '">' + pickup.status + '</span></td>';
-            
+
             var isDelivered = pickup.status === 'DELIVERED';
-            
+
             if (isDelivered) {
               historyHtml += trHtml + '</tr>';
               historyCount++;
@@ -1008,18 +1043,18 @@
               activeHtml += '  </div>';
 
               activeHtml += '  <div class="status-flow">';
-              activeHtml += '    <div class="status-flow__step status-flow__step--completed">✓ Accepted</div>';
-              activeHtml += '    <div class="status-flow__arrow">→</div>';
-              activeHtml += '    <div class="status-flow__step ' + (isPickedUp ? 'status-flow__step--completed">✓' : 'status-flow__step--active">') + ' Picked Up</div>';
-              activeHtml += '    <div class="status-flow__arrow">→</div>';
+              activeHtml += '    <div class="status-flow__step status-flow__step--completed">âœ“ Accepted</div>';
+              activeHtml += '    <div class="status-flow__arrow">â†’</div>';
+              activeHtml += '    <div class="status-flow__step ' + (isPickedUp ? 'status-flow__step--completed">âœ“' : 'status-flow__step--active">') + ' Picked Up</div>';
+              activeHtml += '    <div class="status-flow__arrow">â†’</div>';
               activeHtml += '    <div class="status-flow__step">Delivered</div>';
               activeHtml += '  </div>';
 
               activeHtml += '  <div class="pickup-card__meta">';
-              activeHtml += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">🏪</span><span>' + pickup.providerName + '</span></div>';
-              activeHtml += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">🏢</span><span>' + pickup.ngoName + '</span></div>';
-              activeHtml += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">📍</span><span>' + pickup.providerAddress + ' &rarr; ' + pickup.ngoAddress + '</span></div>';
-              activeHtml += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">⏰</span><span>Expires: ' + pickup.expiryTime + '</span></div>';
+              activeHtml += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">ðŸª</span><span>' + pickup.providerName + '</span></div>';
+              activeHtml += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">ðŸ¢</span><span>' + pickup.ngoName + '</span></div>';
+              activeHtml += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">ðŸ“</span><span>' + pickup.providerAddress + ' &rarr; ' + pickup.ngoAddress + '</span></div>';
+              activeHtml += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">â°</span><span>Expires: ' + pickup.expiryTime + '</span></div>';
               activeHtml += '  </div>';
 
               activeHtml += '  <div class="pickup-card__actions">';
@@ -1077,7 +1112,7 @@
       formData.append('pickupId', id);
     }
 
-    fetch('../volunteer/pickup-action', {
+    apiFetch('../volunteer/pickup-action', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: formData.toString()
@@ -1112,7 +1147,7 @@
 
   // ===== Profile Handling =====
   window.fetchUserProfile = function() {
-    fetch('../profile')
+    apiFetch('../profile')
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch profile');
         return res.json();
@@ -1148,23 +1183,23 @@
         const pPhone = document.getElementById('profile-field-phone');
         const pRole = document.getElementById('profile-field-role');
         const pAddress = document.getElementById('profile-field-address');
-        
+
         if (pName) pName.textContent = user.name;
         if (pEmail) pEmail.textContent = user.email;
         if (pPhone) pPhone.textContent = user.phone || 'Not provided';
-        
+
         // Make role more readable if necessary
         let displayRole = user.role;
         if (user.role === 'PROVIDER') displayRole = 'Food Provider';
         else if (user.role === 'NGO') displayRole = 'NGO / Organization';
         else if (user.role === 'VOLUNTEER') displayRole = 'Volunteer';
-        
+
         if (pRole) pRole.textContent = displayRole;
         const roleBadge = document.getElementById('profile-card-role-badge');
         if (roleBadge) roleBadge.textContent = displayRole;
 
         if (pAddress) pAddress.textContent = user.address || 'Not provided';
-        
+
         // Store user globally for editing
         window.currentUserProfile = user;
       })
@@ -1185,10 +1220,10 @@
     document.getElementById('edit-profile-email').value = user.email;
     document.getElementById('edit-profile-phone').value = user.phone || '';
     document.getElementById('edit-profile-address').value = user.address || '';
-    
+
     const alertBox = document.getElementById('edit-profile-alert');
     if (alertBox) alertBox.classList.add('d-none');
-    
+
     const modal = new bootstrap.Modal(document.getElementById('editProfileModal'));
     modal.show();
   };
@@ -1200,10 +1235,10 @@
       const submitBtn = document.getElementById('edit-profile-submit');
       submitBtn.disabled = true;
       submitBtn.textContent = 'Saving...';
-      
+
       const formData = new URLSearchParams(new FormData(editProfileForm));
-      
-      fetch('../profile', {
+
+      apiFetch('../profile', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: formData.toString()
@@ -1215,10 +1250,10 @@
       .then(data => {
         submitBtn.disabled = false;
         submitBtn.textContent = 'Save Changes';
-        
+
         const modal = bootstrap.Modal.getInstance(document.getElementById('editProfileModal'));
         if (modal) modal.hide();
-        
+
         if (typeof showToast === 'function') {
           showToast('Profile updated successfully!', 'success');
         } else {
@@ -1247,13 +1282,13 @@
     var hourSelect = document.getElementById(prefix + '-hour');
     var minSelect = document.getElementById(prefix + '-minute');
     if (!hourSelect || !minSelect) return;
-    
+
     hourSelect.innerHTML = '';
     for (var i = 1; i <= 12; i++) {
       var val = padZero(i);
       hourSelect.add(new Option(val, val));
     }
-    
+
     minSelect.innerHTML = '';
     for (var i = 0; i < 60; i += 1) {
       var val = padZero(i);
@@ -1268,7 +1303,7 @@
     if (ampmStr === 'AM' && h === 12) h = 0;
     return dateStr + 'T' + padZero(h) + ':' + minStr;
   };
-  
+
   window.getJsDateFromUI = function(prefix) {
     var ds = document.getElementById(prefix + '-date').value;
     var hs = document.getElementById(prefix + '-hour').value;
@@ -1282,12 +1317,12 @@
   window.setUIToJsDate = function(prefix, dateObj) {
     if (!dateObj || isNaN(dateObj.getTime())) return;
     document.getElementById(prefix + '-date').value = dateObj.getFullYear() + '-' + padZero(dateObj.getMonth() + 1) + '-' + padZero(dateObj.getDate());
-    
+
     var h = dateObj.getHours();
     var ap = h >= 12 ? 'PM' : 'AM';
     var h12 = h % 12;
     if (h12 === 0) h12 = 12;
-    
+
     document.getElementById(prefix + '-hour').value = padZero(h12);
     document.getElementById(prefix + '-minute').value = padZero(dateObj.getMinutes());
     document.getElementById(prefix + '-ampm').value = ap;
@@ -1299,13 +1334,13 @@
     var d = padZero(dateObj.getDate());
     var m = months[dateObj.getMonth()];
     var y = dateObj.getFullYear();
-    
+
     var h = dateObj.getHours();
     var ap = h >= 12 ? 'PM' : 'AM';
     var h12 = h % 12;
     if (h12 === 0) h12 = 12;
     var mins = padZero(dateObj.getMinutes());
-    
+
     return d + ' ' + m + ' ' + y + ', ' + padZero(h12) + ':' + mins + ' ' + ap;
   };
 
@@ -1315,21 +1350,21 @@
     var customContainer = document.getElementById(prefix + '-custom-expiry-container');
     var previewText = document.getElementById(prefix + '-expires-at-preview');
     var errorText = document.getElementById(prefix + '-expiry-error');
-    
+
     var hiddenPrefix = prefix === 'add' ? 'food' : 'edit-food';
     var hiddenPrepared = document.getElementById(hiddenPrefix + '-prepared');
     var hiddenExpiry = document.getElementById(hiddenPrefix + '-expiry');
-    
+
     if (!expiresInEl || !previewText || !errorText) return;
-    
+
     var expiresIn = expiresInEl.value;
     errorText.style.display = 'none';
-    
+
     if (!prepDate) {
       previewText.textContent = '--';
       return;
     }
-    
+
     var expDate = null;
     if (expiresIn === 'custom') {
       if (customContainer) customContainer.style.display = 'flex';
@@ -1339,10 +1374,10 @@
       var hours = parseInt(expiresIn, 10);
       expDate = new Date(prepDate.getTime() + hours * 60 * 60 * 1000);
     }
-    
+
     if (expDate && !isNaN(expDate.getTime())) {
       previewText.textContent = formatDisplayDateTime(expDate);
-      
+
       var prepIso = getBackendFormat(
         document.getElementById(prefix + '-prepared-date').value,
         document.getElementById(prefix + '-prepared-hour').value,
@@ -1350,7 +1385,7 @@
         document.getElementById(prefix + '-prepared-ampm').value
       );
       if (hiddenPrepared) hiddenPrepared.value = prepIso;
-      
+
       if (expiresIn === 'custom') {
         var expIso = getBackendFormat(
           document.getElementById(prefix + '-custom-date').value,
@@ -1363,7 +1398,7 @@
         var h = expDate.getHours();
         if (hiddenExpiry) hiddenExpiry.value = expDate.getFullYear() + '-' + padZero(expDate.getMonth()+1) + '-' + padZero(expDate.getDate()) + 'T' + padZero(h) + ':' + padZero(expDate.getMinutes());
       }
-      
+
       if (expDate <= prepDate) {
         errorText.style.display = 'block';
       }
@@ -1375,16 +1410,16 @@
   window.initDateTimeUI = function(prefix) {
     var prepDateInput = document.getElementById(prefix + '-prepared-date');
     if (!prepDateInput) return;
-    
+
     populateTimeDropdowns(prefix + '-prepared');
     populateTimeDropdowns(prefix + '-custom');
-    
+
     var elements = [
       prefix + '-prepared-date', prefix + '-prepared-hour', prefix + '-prepared-minute', prefix + '-prepared-ampm',
       prefix + '-expires-in',
       prefix + '-custom-date', prefix + '-custom-hour', prefix + '-custom-minute', prefix + '-custom-ampm'
     ];
-    
+
     elements.forEach(function(id) {
       var el = document.getElementById(id);
       if (el) {
@@ -1398,7 +1433,7 @@
     var prepDate = getJsDateFromUI(prefix + '-prepared');
     var expiresIn = document.getElementById(prefix + '-expires-in').value;
     var expDate = expiresIn === 'custom' ? getJsDateFromUI(prefix + '-custom') : new Date(prepDate.getTime() + parseInt(expiresIn, 10) * 60 * 60 * 1000);
-    
+
     if (expDate <= prepDate) {
       e.preventDefault();
       var err = document.getElementById(prefix + '-expiry-error');
@@ -1410,7 +1445,7 @@
 
   document.addEventListener('DOMContentLoaded', function() {
     var path = window.location.pathname || '';
-    
+
     // Always fetch user profile and notifications on dashboard load
     fetchUserProfile();
     if (typeof fetchNotifications === 'function') {
@@ -1435,7 +1470,7 @@
           editForm.addEventListener('submit', function(e) { preventInvalidExpiry(e, 'edit'); });
         }
       }
-      
+
       if (document.getElementById('recent-listings-tbody')) {
         fetchProviderListings();
       }

@@ -68,7 +68,7 @@
 
       try {
         const formData = new URLSearchParams(new FormData(loginForm));
-        const response = await fetch(loginForm.action, {
+        const response = await apiFetch(loginForm.action, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -127,7 +127,7 @@
 
       try {
         const formData = new URLSearchParams(new FormData(registerForm));
-        const response = await fetch(registerForm.action, {
+        const response = await apiFetch(registerForm.action, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'

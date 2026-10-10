@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Provider Dashboard — FoodRescue</title>
+  <title>Provider Dashboard â€” FoodRescue</title>
   <meta name="description" content="Manage your surplus food listings, track claims, and monitor pickup status.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,7 +17,17 @@
   <link rel="stylesheet" href="../assets/css/dashboard.css">
   <link rel="stylesheet" href="../assets/css/responsive.css">
 
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍱</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>ðŸ±</text></svg>">
+<link rel="stylesheet" href="../assets/css/theme.css">
+
+<script>
+    (function() {
+      var savedTheme = localStorage.getItem('foodrescue-theme');
+      if (savedTheme === 'dark' || savedTheme === 'aesthetic') {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      }
+    })();
+  </script>
 </head>
 <body>
 
@@ -25,18 +35,28 @@
   <nav class="navbar navbar--solid" id="navbar">
     <div class="navbar__inner">
       <div style="display:flex;align-items:center;gap:1rem;">
-        <button class="sidebar-toggle-btn" id="sidebar-toggle" aria-label="Toggle sidebar" style="display:none;background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--color-text);">☰</button>
+        <button class="sidebar-toggle-btn" id="sidebar-toggle" aria-label="Toggle sidebar" style="display:none;background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--color-text);">â˜°</button>
         <a href="../index.html" class="navbar__brand" style="color:var(--color-text);">
-          <span class="navbar__brand-icon">🍱</span>
-          Food<span class="navbar__brand-highlight">Rescue</span>
+          <span class="navbar__brand-icon">ðŸ±</span>
+          Food<span class="navbar__brand-highlight rgb-text">Rescue</span>
         </a>
       </div>
 
       <div style="display:flex;align-items:center;gap:1rem;">
+
+<div class="theme-dropdown" id="theme-dropdown" style="position:relative;">
+          <button class="theme-btn" id="theme-btn" aria-label="Theme Menu">Theme â–¾</button>
+          <div class="theme-panel" id="theme-panel">
+            <button class="theme-option" data-set-theme="light">Light</button>
+            <button class="theme-option" data-set-theme="dark">Dark</button>
+            <button class="theme-option" data-set-theme="aesthetic">Aesthetic</button>
+          </div>
+        </div>
         <!-- Notifications -->
+
         <div class="notification-dropdown" id="notification-dropdown">
           <button class="notification-btn" id="notification-btn" aria-label="Notifications">
-            🔔
+            ðŸ””
             <span class="notification-btn__count" id="notification-count" style="display:none;">0</span>
           </button>
           <div class="notification-panel" id="notification-panel">
@@ -46,7 +66,7 @@
             </div>
             <div class="notification-panel__list">
               <div class="notification-item notification-item--unread">
-                <div class="notification-item__icon notification-item__icon--success">✅</div>
+                <div class="notification-item__icon notification-item__icon--success">âœ…</div>
                 <div class="notification-item__content">
                   <div class="notification-item__title">Food claim approved</div>
                   <div class="notification-item__time">2 minutes ago</div>
@@ -54,7 +74,7 @@
                 <div class="notification-item__dot"></div>
               </div>
               <div class="notification-item notification-item--unread">
-                <div class="notification-item__icon notification-item__icon--info">🚴</div>
+                <div class="notification-item__icon notification-item__icon--info">ðŸš´</div>
                 <div class="notification-item__content">
                   <div class="notification-item__title">Volunteer assigned for pickup</div>
                   <div class="notification-item__time">15 minutes ago</div>
@@ -62,7 +82,7 @@
                 <div class="notification-item__dot"></div>
               </div>
               <div class="notification-item notification-item--unread">
-                <div class="notification-item__icon notification-item__icon--warning">⏰</div>
+                <div class="notification-item__icon notification-item__icon--warning">â°</div>
                 <div class="notification-item__content">
                   <div class="notification-item__title">Listing expiring soon</div>
                   <div class="notification-item__time">1 hour ago</div>
@@ -70,7 +90,7 @@
                 <div class="notification-item__dot"></div>
               </div>
               <div class="notification-item">
-                <div class="notification-item__icon notification-item__icon--success">✅</div>
+                <div class="notification-item__icon notification-item__icon--success">âœ…</div>
                 <div class="notification-item__content">
                   <div class="notification-item__title">Pickup completed successfully</div>
                   <div class="notification-item__time">3 hours ago</div>
@@ -101,7 +121,7 @@
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar__header">
-        <span class="sidebar__role" id="sidebar-role-display">🏪 Provider</span>
+        <span class="sidebar__role" id="sidebar-role-display">ðŸª Provider</span>
         <div class="sidebar__user-name" id="sidebar-user-name"></div>
         <div class="sidebar__user-email" id="sidebar-user-email"></div>
       </div>
@@ -109,37 +129,37 @@
       <nav class="sidebar__nav">
         <span class="sidebar__section-label">Main</span>
         <a href="#" class="sidebar__link sidebar__link--active" data-page="dashboard">
-          <span class="sidebar__link-icon">📊</span> Dashboard
+          <span class="sidebar__link-icon">ðŸ“Š</span> Dashboard
         </a>
         <a href="#" class="sidebar__link" data-page="add-food">
-          <span class="sidebar__link-icon">➕</span> Add Food
+          <span class="sidebar__link-icon">âž•</span> Add Food
         </a>
         <a href="#" class="sidebar__link" data-page="listings">
-          <span class="sidebar__link-icon">📋</span> My Listings
+          <span class="sidebar__link-icon">ðŸ“‹</span> My Listings
         </a>
 
         <span class="sidebar__section-label">Management</span>
         <a href="#" class="sidebar__link" data-page="claims">
-          <span class="sidebar__link-icon">✋</span> Claims
+          <span class="sidebar__link-icon">âœ‹</span> Claims
           <span class="sidebar__link-badge" style="display:none;">0</span>
         </a>
         <a href="#" class="sidebar__link" data-page="pickups">
-          <span class="sidebar__link-icon">🚚</span> Pickup Status
+          <span class="sidebar__link-icon">ðŸšš</span> Pickup Status
         </a>
         <a href="#" class="sidebar__link" data-page="notifications">
-          <span class="sidebar__link-icon">🔔</span> Notifications
+          <span class="sidebar__link-icon">ðŸ””</span> Notifications
           <span class="sidebar__link-badge" style="display:none;">0</span>
         </a>
 
         <span class="sidebar__section-label">Account</span>
         <a href="#" class="sidebar__link" data-page="profile">
-          <span class="sidebar__link-icon">👤</span> Profile
+          <span class="sidebar__link-icon">ðŸ‘¤</span> Profile
         </a>
       </nav>
 
       <div class="sidebar__footer">
         <button class="sidebar__logout" id="logout-btn">
-          <span class="sidebar__link-icon">🚪</span> Logout
+          <span class="sidebar__link-icon">ðŸšª</span> Logout
         </button>
       </div>
     </aside>
@@ -156,7 +176,7 @@
             <p class="dashboard__subtitle" id="dashboard-welcome">Welcome back! Here's your overview.</p>
           </div>
           <a href="#" class="btn btn-primary" onclick="showPage('add-food');return false;">
-            ➕ Add Food Listing
+            âž• Add Food Listing
           </a>
         </div>
 
@@ -164,8 +184,8 @@
         <div class="stats-grid">
           <div class="stat-card">
             <div class="stat-card__header">
-              <div class="stat-card__icon stat-card__icon--green">📋</div>
-              <div class="stat-card__trend stat-card__trend--up">↑ 12%</div>
+              <div class="stat-card__icon stat-card__icon--green">ðŸ“‹</div>
+              <div class="stat-card__trend stat-card__trend--up">â†‘ 12%</div>
             </div>
 
             <div class="stat-card__value" id="active-listings-count">0</div>
@@ -173,22 +193,22 @@
           </div>
           <div class="stat-card">
             <div class="stat-card__header">
-              <div class="stat-card__icon stat-card__icon--blue">✋</div>
-              <div class="stat-card__trend stat-card__trend--up">↑ 5%</div>
+              <div class="stat-card__icon stat-card__icon--blue">âœ‹</div>
+              <div class="stat-card__trend stat-card__trend--up">â†‘ 5%</div>
             </div>
             <div class="stat-card__value">0</div>
             <div class="stat-card__label">Claimed Food</div>
           </div>
           <div class="stat-card">
             <div class="stat-card__header">
-              <div class="stat-card__icon stat-card__icon--yellow">✅</div>
+              <div class="stat-card__icon stat-card__icon--yellow">âœ…</div>
             </div>
             <div class="stat-card__value">0</div>
             <div class="stat-card__label">Completed Donations</div>
           </div>
           <div class="stat-card">
             <div class="stat-card__header">
-              <div class="stat-card__icon stat-card__icon--red">🚚</div>
+              <div class="stat-card__icon stat-card__icon--red">ðŸšš</div>
             </div>
             <div class="stat-card__value">0</div>
             <div class="stat-card__label">Pending Pickups</div>
@@ -286,7 +306,7 @@
                     <option value="48">2 Days</option>
                     <option value="custom">Custom</option>
                   </select>
-                
+
                   <div id="add-custom-expiry-container" style="display:none;margin-top:0.5rem;gap:0.5rem;flex-wrap:wrap;">
                     <input type="date" id="add-custom-date" class="form-input" style="flex:1;min-width:130px;">
                     <div style="display:flex;gap:0.25rem;align-items:center;">
@@ -299,7 +319,7 @@
                       </select>
                     </div>
                   </div>
-                
+
                   <div style="margin-top:0.5rem;font-size:0.875rem;color:var(--color-text);">
                     Expires At: <strong id="add-expires-at-preview">--</strong>
                     <div id="add-expiry-error" style="display:none;margin-top:0.25rem;color:#dc3545;">Expiry time must be after the prepared time.</div>
@@ -386,7 +406,7 @@
                     <option value="48">2 Days</option>
                     <option value="custom">Custom</option>
                   </select>
-                
+
                   <div id="edit-custom-expiry-container" style="display:none;margin-top:0.5rem;gap:0.5rem;flex-wrap:wrap;">
                     <input type="date" id="edit-custom-date" class="form-input" style="flex:1;min-width:130px;">
                     <div style="display:flex;gap:0.25rem;align-items:center;">
@@ -399,7 +419,7 @@
                       </select>
                     </div>
                   </div>
-                
+
                   <div style="margin-top:0.5rem;font-size:0.875rem;color:var(--color-text);">
                     Expires At: <strong id="edit-expires-at-preview">--</strong>
                     <div id="edit-expiry-error" style="display:none;margin-top:0.25rem;color:#dc3545;">Expiry time must be after the prepared time.</div>
@@ -432,7 +452,7 @@
             <h1 class="dashboard__title">My Listings</h1>
             <p class="dashboard__subtitle">All your food listings in one place.</p>
           </div>
-          <a href="#" class="btn btn-primary" onclick="showPage('add-food');return false;">➕ Add New</a>
+          <a href="#" class="btn btn-primary" onclick="showPage('add-food');return false;">âž• Add New</a>
         </div>
 
         <div class="dashboard-panel">
@@ -581,7 +601,7 @@
           </div>
         </div>
       </div>
-      
+
       <!-- Edit Profile Modal -->
       <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -622,9 +642,11 @@
     </main>
   </div>
 
+  <script src="../assets/js/config.js"></script>
   <script src="../assets/js/dashboard.js"></script>
   <!-- Bootstrap 5 JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/theme.js"></script>
 </body>
 </html>
 

@@ -51,7 +51,7 @@
         formData.append('action', 'read');
         formData.append('notificationId', notif.id);
 
-        fetch(API_URL, {
+        apiFetch(API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: formData.toString()
@@ -81,21 +81,20 @@
     var countBadge = document.getElementById('notification-count');
     if (!countBadge) return;
 
-    fetch(API_URL + '?type=count')
+    apiFetch(API_URL + '?action=unreadCount')
       .then(function(res) {
         if (!res.ok) throw new Error('Failed to fetch count');
         return res.json();
       })
       .then(function(data) {
-        if (data && data.success) {
-          var unread = data.count || 0;
+        if (data && typeof data.unreadCount === 'number') {
+          var unread = data.unreadCount;
           countBadge.textContent = unread;
           countBadge.style.display = unread > 0 ? 'inline-flex' : 'none';
         }
       })
       .catch(function(err) {
         console.error('Error fetching notification count:', err);
-        countBadge.style.display = 'none';
       });
   }
 
@@ -110,7 +109,7 @@
 
     list.innerHTML = '<div style="padding:1rem;text-align:center;color:#666;">Loading...</div>';
 
-    fetch(API_URL)
+    apiFetch(API_URL)
       .then(function(res) {
         if (!res.ok) throw new Error('Failed to fetch notifications');
         return res.json();
@@ -151,7 +150,7 @@
         var formData = new URLSearchParams();
         formData.append('action', 'read-all');
 
-        fetch(API_URL, {
+        apiFetch(API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: formData.toString()

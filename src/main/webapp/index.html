@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FoodRescue — Turning Surplus Food Into Social Impact</title>
+  <title>FoodRescue â€” Turning Surplus Food Into Social Impact</title>
   <meta name="description" content="FoodRescue connects surplus food providers with NGOs and volunteers to reduce food waste and help communities in need. Rescue meals, support communities.">
 
   <!-- Google Fonts -->
@@ -20,7 +20,17 @@
   <link rel="stylesheet" href="assets/css/responsive.css">
 
   <!-- Favicon -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍱</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>ðŸ±</text></svg>">
+<link rel="stylesheet" href="assets/css/theme.css">
+
+<script>
+    (function() {
+      var savedTheme = localStorage.getItem('foodrescue-theme');
+      if (savedTheme === 'dark' || savedTheme === 'aesthetic') {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      }
+    })();
+  </script>
 </head>
 <body>
 
@@ -28,8 +38,8 @@
   <nav class="navbar navbar--transparent" id="navbar">
     <div class="navbar__inner">
       <a href="index.html" class="navbar__brand" id="nav-brand">
-        <span class="navbar__brand-icon">🍱</span>
-        Food<span class="navbar__brand-highlight">Rescue</span>
+        <span class="navbar__brand-icon">ðŸ±</span>
+        Food<span class="navbar__brand-highlight rgb-text">Rescue</span>
       </a>
 
       <div class="navbar__nav" id="nav-links">
@@ -41,7 +51,17 @@
       </div>
 
       <div class="navbar__actions" id="nav-actions">
-        <a href="login.html" class="navbar__login">Login</a>
+
+<div class="theme-dropdown" id="theme-dropdown" style="position:relative; margin-right: 1rem;">
+          <button class="theme-btn" id="theme-btn" aria-label="Theme Menu">Theme â–¾</button>
+          <div class="theme-panel" id="theme-panel">
+            <button class="theme-option" data-set-theme="light">Light</button>
+            <button class="theme-option" data-set-theme="dark">Dark</button>
+            <button class="theme-option" data-set-theme="aesthetic">Aesthetic</button>
+          </div>
+        </div>
+        <a href="login.html" class="navbar__login">
+Login</a>
         <a href="register.html" class="navbar__cta">Get Started</a>
       </div>
 
@@ -72,7 +92,7 @@
     <div class="hero__inner">
       <div class="hero__content">
         <div class="hero__label">
-          🌱 Reducing Food Waste, One Meal at a Time
+          ðŸŒ± Reducing Food Waste, One Meal at a Time
         </div>
         <h1 class="hero__title">
           Turning Surplus Food<br>
@@ -89,21 +109,21 @@
 
       <div class="hero__stats">
         <div class="hero__stat-card">
-          <div class="hero__stat-icon">🍛</div>
+          <div class="hero__stat-icon">ðŸ›</div>
           <div>
             <div class="hero__stat-value" data-count="1250">1,250+</div>
-            <div class="hero__stat-label">Meals Rescued</div>
+            <div class="hero__stat-label">Donations Rescued</div>
           </div>
         </div>
         <div class="hero__stat-card">
-          <div class="hero__stat-icon">🏪</div>
+          <div class="hero__stat-icon">ðŸª</div>
           <div>
             <div class="hero__stat-value" data-count="85">85+</div>
             <div class="hero__stat-label">Food Providers</div>
           </div>
         </div>
         <div class="hero__stat-card">
-          <div class="hero__stat-icon">🤝</div>
+          <div class="hero__stat-icon">ðŸ¤</div>
           <div>
             <div class="hero__stat-value" data-count="42">42+</div>
             <div class="hero__stat-label">NGO Partners</div>
@@ -118,22 +138,22 @@
   <section class="impact-stats" id="impact">
     <div class="impact-stats__grid stagger">
       <div class="impact-stats__item reveal">
-        <div class="impact-stats__icon">🍛</div>
+        <div class="impact-stats__icon">ðŸ›</div>
         <div class="impact-stats__value" data-target="12540">0</div>
-        <div class="impact-stats__label">Meals Rescued</div>
+        <div class="impact-stats__label">Donations Rescued</div>
       </div>
       <div class="impact-stats__item reveal">
-        <div class="impact-stats__icon">🏪</div>
+        <div class="impact-stats__icon">ðŸª</div>
         <div class="impact-stats__value" data-target="120">0</div>
         <div class="impact-stats__label">Food Providers</div>
       </div>
       <div class="impact-stats__item reveal">
-        <div class="impact-stats__icon">🤝</div>
+        <div class="impact-stats__icon">ðŸ¤</div>
         <div class="impact-stats__value" data-target="48">0</div>
         <div class="impact-stats__label">NGO Partners</div>
       </div>
       <div class="impact-stats__item reveal">
-        <div class="impact-stats__icon">🚚</div>
+        <div class="impact-stats__icon">ðŸšš</div>
         <div class="impact-stats__value" data-target="8420">0</div>
         <div class="impact-stats__label">Successful Pickups</div>
       </div>
@@ -152,25 +172,25 @@
     <div class="how-it-works__grid stagger">
       <div class="how-it-works__step reveal">
         <div class="how-it-works__number">01</div>
-        <div class="how-it-works__icon">📋</div>
+        <div class="how-it-works__icon">ðŸ“‹</div>
         <h4 class="how-it-works__title">List Surplus Food</h4>
         <p class="how-it-works__desc">Providers list their surplus food with quantity, expiry time, and pickup location.</p>
       </div>
       <div class="how-it-works__step reveal">
         <div class="how-it-works__number">02</div>
-        <div class="how-it-works__icon">✋</div>
+        <div class="how-it-works__icon">âœ‹</div>
         <h4 class="how-it-works__title">NGO Claims Food</h4>
         <p class="how-it-works__desc">Nearby NGOs discover available food and claim donations for their community.</p>
       </div>
       <div class="how-it-works__step reveal">
         <div class="how-it-works__number">03</div>
-        <div class="how-it-works__icon">🚴</div>
+        <div class="how-it-works__icon">ðŸš´</div>
         <h4 class="how-it-works__title">Volunteer Picks Up</h4>
         <p class="how-it-works__desc">Volunteers accept pickup tasks and deliver rescued food to the NGO.</p>
       </div>
       <div class="how-it-works__step reveal">
         <div class="how-it-works__number">04</div>
-        <div class="how-it-works__icon">❤️</div>
+        <div class="how-it-works__icon">â¤ï¸</div>
         <h4 class="how-it-works__title">Food Reaches People</h4>
         <p class="how-it-works__desc">Good food reaches communities in need instead of going to waste.</p>
       </div>
@@ -183,24 +203,24 @@
     <div class="section-header">
       <span class="section-label">Join the Mission</span>
       <h2>Who Can Use FoodRescue?</h2>
-      <p>Whether you have surplus food, need food for your community, or want to volunteer — there's a role for you.</p>
+      <p>Whether you have surplus food, need food for your community, or want to volunteer â€” there's a role for you.</p>
     </div>
 
     <div class="user-roles__grid stagger">
       <div class="user-roles__card reveal">
-        <div class="user-roles__icon">🏪</div>
+        <div class="user-roles__icon">ðŸª</div>
         <h4 class="user-roles__title">Food Providers</h4>
         <p class="user-roles__desc">Restaurants, hotels, caterers, event organizers, and messes. List your surplus food before it goes to waste.</p>
         <a href="register.html" class="btn btn-primary">Become a Provider</a>
       </div>
       <div class="user-roles__card reveal">
-        <div class="user-roles__icon">🏢</div>
+        <div class="user-roles__icon">ðŸ¢</div>
         <h4 class="user-roles__title">NGOs</h4>
         <p class="user-roles__desc">Discover available food donations nearby and claim them for your community. Coordinate pickups seamlessly.</p>
         <a href="register.html" class="btn btn-primary">Join as NGO</a>
       </div>
       <div class="user-roles__card reveal">
-        <div class="user-roles__icon">🚴</div>
+        <div class="user-roles__icon">ðŸš´</div>
         <h4 class="user-roles__title">Volunteers</h4>
         <p class="user-roles__desc">Help collect and deliver rescued food from providers to NGOs. Make a direct impact in your community.</p>
         <a href="register.html" class="btn btn-primary">Become a Volunteer</a>
@@ -218,92 +238,7 @@
     </div>
 
     <div class="available-food__grid stagger">
-      <!-- Food Card 1 -->
-      <div class="food-card reveal">
-        <img src="assets/images/food/meals.jpg" alt="Fresh Cooked Meals" class="food-card__img" loading="lazy">
-        <div class="food-card__body">
-          <div class="food-card__header">
-            <h5 class="food-card__name">Fresh Cooked Meals</h5>
-            <span class="badge badge-success">Available</span>
-          </div>
-          <div class="food-card__meta">
-            <div class="food-card__meta-item">
-              <span class="food-card__meta-icon">🏪</span>
-              <span>ABC Restaurant</span>
-            </div>
-            <div class="food-card__meta-item">
-              <span class="food-card__meta-icon">📦</span>
-              <span>50 Meals</span>
-            </div>
-            <div class="food-card__meta-item">
-              <span class="food-card__meta-icon">📍</span>
-              <span>Jaipur, Rajasthan</span>
-            </div>
-          </div>
-          <div class="food-card__footer">
-            <span class="food-card__expiry">⏰ Expires: 7:30 PM</span>
-            <a href="#" class="btn btn-primary btn-sm">View Details</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Food Card 2 -->
-      <div class="food-card reveal">
-        <img src="assets/images/food/biryani.jpg" alt="Chicken Biryani" class="food-card__img" loading="lazy">
-        <div class="food-card__body">
-          <div class="food-card__header">
-            <h5 class="food-card__name">Chicken Biryani</h5>
-            <span class="badge badge-warning">Expiring Soon</span>
-          </div>
-          <div class="food-card__meta">
-            <div class="food-card__meta-item">
-              <span class="food-card__meta-icon">🏪</span>
-              <span>Royal Kitchen</span>
-            </div>
-            <div class="food-card__meta-item">
-              <span class="food-card__meta-icon">📦</span>
-              <span>30 Servings</span>
-            </div>
-            <div class="food-card__meta-item">
-              <span class="food-card__meta-icon">📍</span>
-              <span>Delhi, NCR</span>
-            </div>
-          </div>
-          <div class="food-card__footer">
-            <span class="food-card__expiry">⏰ Expires: 6:00 PM</span>
-            <a href="#" class="btn btn-primary btn-sm">View Details</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Food Card 3 -->
-      <div class="food-card reveal">
-        <img src="assets/images/food/bread.jpg" alt="Fresh Baked Bread" class="food-card__img" loading="lazy">
-        <div class="food-card__body">
-          <div class="food-card__header">
-            <h5 class="food-card__name">Fresh Baked Bread</h5>
-            <span class="badge badge-success">Available</span>
-          </div>
-          <div class="food-card__meta">
-            <div class="food-card__meta-item">
-              <span class="food-card__meta-icon">🏪</span>
-              <span>City Bakery</span>
-            </div>
-            <div class="food-card__meta-item">
-              <span class="food-card__meta-icon">📦</span>
-              <span>100 Loaves</span>
-            </div>
-            <div class="food-card__meta-item">
-              <span class="food-card__meta-icon">📍</span>
-              <span>Mumbai, MH</span>
-            </div>
-          </div>
-          <div class="food-card__footer">
-            <span class="food-card__expiry">⏰ Expires: 9:00 PM</span>
-            <a href="#" class="btn btn-primary btn-sm">View Details</a>
-          </div>
-        </div>
-      </div>
+      <!-- Dynamic Content Loaded by homepage.js -->
     </div>
   </section>
 
@@ -317,7 +252,7 @@
     </div>
 
     <div class="map-placeholder">
-      <div class="map-placeholder__icon">🗺️</div>
+      <div class="map-placeholder__icon">ðŸ—ºï¸</div>
       <div class="map-placeholder__text">Interactive Map Coming Soon</div>
       <div class="map-placeholder__hint">Map integration will display real-time food availability and pickup locations.</div>
     </div>
@@ -333,17 +268,17 @@
 
       <div class="impact-story__flow reveal">
         <div class="impact-story__flow-step">
-          <div class="impact-story__flow-icon">🗑️</div>
+          <div class="impact-story__flow-icon">ðŸ—‘ï¸</div>
           <div class="impact-story__flow-label">Food Waste</div>
         </div>
-        <div class="impact-story__flow-arrow">→</div>
+        <div class="impact-story__flow-arrow">â†’</div>
         <div class="impact-story__flow-step">
-          <div class="impact-story__flow-icon">🍱</div>
+          <div class="impact-story__flow-icon">ðŸ±</div>
           <div class="impact-story__flow-label">FoodRescue</div>
         </div>
-        <div class="impact-story__flow-arrow">→</div>
+        <div class="impact-story__flow-arrow">â†’</div>
         <div class="impact-story__flow-step">
-          <div class="impact-story__flow-icon">❤️</div>
+          <div class="impact-story__flow-icon">â¤ï¸</div>
           <div class="impact-story__flow-label">Community Impact</div>
         </div>
       </div>
@@ -361,23 +296,23 @@
 
     <div class="env-impact__grid stagger">
       <div class="env-impact__card reveal">
-        <div class="env-impact__icon">🍱</div>
+        <div class="env-impact__icon">ðŸ±</div>
         <!-- TODO: Replace static values with backend response -->
         <div class="env-impact__value" data-target="12540">0</div>
         <div class="env-impact__label">Meals Rescued</div>
       </div>
       <div class="env-impact__card reveal">
-        <div class="env-impact__icon">🌱</div>
+        <div class="env-impact__icon">ðŸŒ±</div>
         <div class="env-impact__value" data-target="4200">0</div>
         <div class="env-impact__label">Kg Food Waste Reduced</div>
       </div>
       <div class="env-impact__card reveal">
-        <div class="env-impact__icon">🚚</div>
+        <div class="env-impact__icon">ðŸšš</div>
         <div class="env-impact__value" data-target="8420">0</div>
         <div class="env-impact__label">Pickups Completed</div>
       </div>
       <div class="env-impact__card reveal">
-        <div class="env-impact__icon">🤝</div>
+        <div class="env-impact__icon">ðŸ¤</div>
         <div class="env-impact__value" data-target="156">0</div>
         <div class="env-impact__label">Communities Supported</div>
       </div>
@@ -405,7 +340,7 @@
     <div class="footer__inner">
       <div class="footer__grid">
         <div>
-          <div class="footer__brand">🍱 Food<span style="color:#16A34A">Rescue</span></div>
+          <div class="footer__brand">ðŸ± Food<span style="color:#16A34A">Rescue</span></div>
           <p class="footer__brand-desc">
             Connecting surplus food with communities in need. Together, we can reduce food waste and feed more people.
           </p>
@@ -437,10 +372,10 @@
       <div class="footer__bottom">
         <span>&copy; 2026 FoodRescue. All rights reserved.</span>
         <div class="footer__socials">
-          <a href="#" class="footer__social-link" aria-label="Twitter">𝕏</a>
-          <a href="#" class="footer__social-link" aria-label="Instagram">📷</a>
-          <a href="#" class="footer__social-link" aria-label="LinkedIn">💼</a>
-          <a href="#" class="footer__social-link" aria-label="GitHub">⌨</a>
+          <a href="#" class="footer__social-link" aria-label="Twitter">ð•</a>
+          <a href="#" class="footer__social-link" aria-label="Instagram">ðŸ“·</a>
+          <a href="#" class="footer__social-link" aria-label="LinkedIn">ðŸ’¼</a>
+          <a href="#" class="footer__social-link" aria-label="GitHub">âŒ¨</a>
         </div>
       </div>
     </div>
@@ -448,9 +383,12 @@
 
 
   <!-- JS -->
+  <script src="assets/js/config.js"></script>
   <script src="assets/js/main.js"></script>
   <!-- Bootstrap 5 JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/theme.js"></script>
+<script src="assets/js/homepage.js"></script>
 </body>
 </html>
 

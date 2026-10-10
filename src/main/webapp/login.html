@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login — FoodRescue</title>
+  <title>Login â€” FoodRescue</title>
   <meta name="description" content="Login to your FoodRescue account to manage food donations, claims, and deliveries.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,15 +18,35 @@
   <link rel="stylesheet" href="assets/css/responsive.css">
 
   <link rel="icon"
-    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍱</text></svg>">
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>ðŸ±</text></svg>">
+<link rel="stylesheet" href="assets/css/theme.css">
+
+<script>
+    (function() {
+      var savedTheme = localStorage.getItem('foodrescue-theme');
+      if (savedTheme === 'dark' || savedTheme === 'aesthetic') {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      }
+    })();
+  </script>
 </head>
 
 <body>
 
   <div class="auth-page">
     <!-- Left Branding Panel -->
+
+<div class="theme-dropdown" id="theme-dropdown" style="position:absolute; top: 1rem; right: 1rem; z-index: 9999;">
+      <button class="theme-btn" id="theme-btn" aria-label="Theme Menu">Theme â–¾</button>
+      <div class="theme-panel" id="theme-panel">
+        <button class="theme-option" data-set-theme="light">Light</button>
+        <button class="theme-option" data-set-theme="dark">Dark</button>
+        <button class="theme-option" data-set-theme="aesthetic">Aesthetic</button>
+      </div>
+    </div>
     <div class="auth-branding">
-      <div class="auth-branding__logo">🍱 FoodRescue</div>
+
+      <div class="auth-branding__logo">ðŸ± Food<span class="rgb-text">Rescue</span></div>
       <h2 class="auth-branding__title">Welcome Back</h2>
       <p class="auth-branding__desc">
         Continue your mission to rescue food and support communities in need.
@@ -53,7 +73,7 @@
         <div class="auth-form__header">
           <a href="index.html"
             style="display:inline-flex;align-items:center;gap:0.5rem;font-size:0.875rem;color:var(--color-text-muted);margin-bottom:1.5rem;">
-            ← Back to Home
+            â† Back to Home
           </a>
           <h1 class="auth-form__title">Sign In</h1>
           <p class="auth-form__subtitle">
@@ -63,7 +83,7 @@
 
         <!-- Alert placeholder -->
         <div id="login-alert" class="auth-alert auth-alert--error hidden">
-          <span>⚠️</span>
+          <span>âš ï¸</span>
           <span id="login-alert-text">Invalid email or password.</span>
         </div>
 
@@ -80,7 +100,7 @@
               <input type="password" id="login-password" name="password" class="form-input"
                 placeholder="Enter your password" required>
               <button type="button" class="password-toggle" id="toggle-password"
-                aria-label="Toggle password visibility">👁</button>
+                aria-label="Toggle password visibility">ðŸ‘</button>
             </div>
           </div>
 
@@ -99,9 +119,11 @@
     </div>
   </div>
 
+  <script src="assets/js/config.js"></script>
   <script src="assets/js/auth.js"></script>
   <!-- Bootstrap 5 JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/theme.js"></script>
 </body>
 
 </html>
