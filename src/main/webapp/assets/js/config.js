@@ -6,7 +6,7 @@
 const AppConfig = {
     // Set this to the deployed Java backend URL (e.g., 'https://api.foodrescue.com')
     // Keep it empty ('') for relative paths when hosted together on Tomcat.
-    BACKEND_URL: ''
+    BACKEND_URL: 'https://food-rescue-ftd5.onrender.com'
 };
 
 /**

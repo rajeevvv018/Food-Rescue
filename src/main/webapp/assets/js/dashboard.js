@@ -231,9 +231,11 @@
   var logoutBtn = document.getElementById('logout-btn');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', function () {
-      // Redirect to LogoutServlet to invalidate session
+      // Invalidate backend session and redirect to login
       if (confirm('Are you sure you want to logout?')) {
-        window.location.href = '../logout';
+        apiFetch('../logout', { method: 'POST' }).finally(function () {
+          window.location.href = '../login.html';
+        });
       }
     });
   }

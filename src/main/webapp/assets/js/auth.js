@@ -78,7 +78,13 @@
 
         if (response.ok) {
           if (response.redirected) {
-            window.location.href = response.url;
+            try {
+              const redirectPath = new URL(response.url).pathname;
+              const cleanPath = redirectPath.startsWith('/') ? redirectPath.substring(1) : redirectPath;
+              window.location.href = cleanPath;
+            } catch (err) {
+              window.location.href = response.url;
+            }
           } else {
             // Some fallback if redirect didn't happen properly
             window.location.href = 'index.html';
