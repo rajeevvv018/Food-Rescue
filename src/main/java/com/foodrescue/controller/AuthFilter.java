@@ -42,13 +42,13 @@ public class AuthFilter implements Filter {
                 httpRequest.getContextPath();
 
         // User is not logged in
-        if (session == null
-                || session.getAttribute("userId") == null) {
-
-            httpResponse.sendRedirect(
-                    contextPath + "/login.html"
-            );
-
+        if (session == null || session.getAttribute("userId") == null) {
+            String acceptHeader = httpRequest.getHeader("Accept");
+            if (acceptHeader != null && acceptHeader.contains("application/json")) {
+                httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+            } else {
+                httpResponse.sendRedirect(contextPath + "/login.html");
+            }
             return;
         }
 

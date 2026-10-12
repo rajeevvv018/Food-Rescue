@@ -8,15 +8,24 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
+import com.foodrescue.model.FoodClaim;
+import com.foodrescue.model.FoodListing;
+import com.foodrescue.model.Notification;
+import com.foodrescue.service.FoodListingService;
+import com.foodrescue.service.NotificationService;
 
 @WebServlet("/provider/claim-action")
 public class ProviderClaimActionServlet extends HttpServlet {
 
     private FoodClaimService foodClaimService;
+    private FoodListingService foodListingService;
+    private NotificationService notificationService;
 
     @Override
     public void init() throws ServletException {
         foodClaimService = new FoodClaimService();
+        foodListingService = new FoodListingService();
+        notificationService = new NotificationService();
     }
 
     @Override
@@ -66,6 +75,34 @@ public class ProviderClaimActionServlet extends HttpServlet {
             }
 
             if (success) {
+                try {
+                    FoodClaim claim = foodClaimService.getFoodClaimById(claimId);
+                    if (claim != null) {
+                        FoodListing listing = foodListingService.getFoodListingById(claim.getFoodId());
+                        String foodName = (listing != null) ? listing.getFoodName() : "Food";
+
+                        Notification notification = new Notification();
+                        notification.setUserId(claim.getNgoId());
+                        notification.setRead(false);
+
+                        if ("REJECT".equalsIgnoreCase(action)) {
+                            notification.setTitle("Claim Rejected");
+                            notification.setMessage("Your claim for " + foodName + " has been rejected by the provider.");
+                            notificationService.createNotification(notification);
+                        } else if ("READY".equalsIgnoreCase(action)) {
+                            notification.setTitle("Food Ready For Pickup");
+                            notification.setMessage("Your claimed food (" + foodName + ") is now ready for pickup.");
+                            notificationService.createNotification(notification);
+                        } else if ("APPROVE".equalsIgnoreCase(action)) {
+                            notification.setTitle("Claim Approved");
+                            notification.setMessage("Your claim for " + foodName + " was approved. Awaiting ready for pickup status.");
+                            notificationService.createNotification(notification);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
                 response.setContentType("application/json");
                 response.getWriter().write("{\"success\": true, \"message\": \"Action completed successfully\"}");
             } else {

@@ -1,6 +1,13 @@
 package com.foodrescue.controller;
 
 import com.foodrescue.service.PickupService;
+import com.foodrescue.service.FoodClaimService;
+import com.foodrescue.service.NotificationService;
+import com.foodrescue.service.FoodListingService;
+import com.foodrescue.model.FoodClaim;
+import com.foodrescue.model.Pickup;
+import com.foodrescue.model.FoodListing;
+import com.foodrescue.model.Notification;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -14,10 +21,16 @@ import java.io.IOException;
 public class VolunteerPickupActionServlet extends HttpServlet {
 
     private PickupService pickupService;
+    private FoodClaimService foodClaimService;
+    private NotificationService notificationService;
+    private FoodListingService foodListingService;
 
     @Override
     public void init() throws ServletException {
         pickupService = new PickupService();
+        foodClaimService = new FoodClaimService();
+        notificationService = new NotificationService();
+        foodListingService = new FoodListingService();
     }
 
     @Override
@@ -41,6 +54,8 @@ public class VolunteerPickupActionServlet extends HttpServlet {
         }
 
         boolean success = false;
+        long claimIdForNotification = -1;
+
         try {
             switch (action.toUpperCase()) {
                 case "ACCEPT":
@@ -51,6 +66,9 @@ public class VolunteerPickupActionServlet extends HttpServlet {
                     }
                     long claimId = Long.parseLong(claimIdStr);
                     success = pickupService.acceptPickup(claimId, volunteerId);
+                    if (success) {
+                        claimIdForNotification = claimId;
+                    }
                     break;
                 case "PICKED_UP":
                     if (pickupIdStr == null) {
@@ -59,7 +77,16 @@ public class VolunteerPickupActionServlet extends HttpServlet {
                         return;
                     }
                     long pickupId = Long.parseLong(pickupIdStr);
+                    Pickup pickupObj = pickupService.getPickupById(pickupId);
+                    if (pickupObj == null) {
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        response.getWriter().write("{\"error\": \"Pickup record not found\"}");
+                        return;
+                    }
                     success = pickupService.markPickedUp(pickupId, volunteerId);
+                    if (success) {
+                        claimIdForNotification = pickupObj.getClaimId();
+                    }
                     break;
                 case "DELIVERED":
                     if (pickupIdStr == null) {
@@ -68,7 +95,21 @@ public class VolunteerPickupActionServlet extends HttpServlet {
                         return;
                     }
                     long pickupId2 = Long.parseLong(pickupIdStr);
-                    success = pickupService.markDelivered(pickupId2, volunteerId);
+                    Pickup pickupToDeliver = pickupService.getPickupById(pickupId2);
+                    if (pickupToDeliver == null || pickupToDeliver.getClaimId() <= 0) {
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        response.getWriter().write("{\"error\": \"Pickup record not found\"}");
+                        return;
+                    }
+
+                    // Atomic single JDBC transaction:
+                    // 1. Verifies pickup belongs to volunteer and is currently in PICKED_UP status (locked FOR UPDATE)
+                    // 2. Verifies associated claim is in expected READY_FOR_PICKUP status
+                    // 3. Atomically updates claim to COMPLETED and pickup to DELIVERED
+                    success = pickupService.completePickupAndClaim(pickupId2, volunteerId);
+                    if (success) {
+                        claimIdForNotification = pickupToDeliver.getClaimId();
+                    }
                     break;
                 default:
                     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -77,6 +118,60 @@ public class VolunteerPickupActionServlet extends HttpServlet {
             }
 
             if (success) {
+                // Notifications are best-effort and decoupled from core status update success
+                try {
+                    if (claimIdForNotification > 0) {
+                        FoodClaim claim = foodClaimService.getFoodClaimById(claimIdForNotification);
+                        if (claim != null) {
+                            FoodListing listing = foodListingService.getFoodListingById(claim.getFoodId());
+                            if (listing != null) {
+                                String foodName = listing.getFoodName();
+
+                                Notification notificationProvider = new Notification();
+                                notificationProvider.setUserId(listing.getProviderId());
+                                notificationProvider.setRead(false);
+
+                                Notification notificationNgo = new Notification();
+                                notificationNgo.setUserId(claim.getNgoId());
+                                notificationNgo.setRead(false);
+
+                                String claimRef = " (Claim #" + claimIdForNotification + ")";
+
+                                if ("ACCEPT".equalsIgnoreCase(action)) {
+                                    notificationProvider.setTitle("Pickup Accepted");
+                                    notificationProvider.setMessage("A volunteer has accepted the pickup for " + foodName + claimRef + ".");
+                                    notificationNgo.setTitle("Pickup Accepted");
+                                    notificationNgo.setMessage("A volunteer has accepted the pickup for " + foodName + claimRef + ".");
+                                } else if ("PICKED_UP".equalsIgnoreCase(action)) {
+                                    notificationProvider.setTitle("Food Picked Up");
+                                    notificationProvider.setMessage("The volunteer has picked up " + foodName + claimRef + ".");
+                                    notificationNgo.setTitle("Food Picked Up");
+                                    notificationNgo.setMessage("The volunteer has picked up " + foodName + " and is en route" + claimRef + ".");
+                                } else if ("DELIVERED".equalsIgnoreCase(action)) {
+                                    notificationProvider.setTitle("Food Delivered");
+                                    notificationProvider.setMessage("The volunteer has successfully delivered " + foodName + claimRef + ".");
+                                    notificationNgo.setTitle("Food Delivered");
+                                    notificationNgo.setMessage("The volunteer has successfully delivered " + foodName + claimRef + ".");
+                                }
+
+                                try {
+                                    notificationService.createNotification(notificationProvider);
+                                } catch (Exception e) {
+                                    getServletContext().log("[VolunteerPickupAction] WARNING: Failed to send provider notification: " + e.getMessage(), e);
+                                }
+
+                                try {
+                                    notificationService.createNotification(notificationNgo);
+                                } catch (Exception e) {
+                                    getServletContext().log("[VolunteerPickupAction] WARNING: Failed to send NGO notification: " + e.getMessage(), e);
+                                }
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    getServletContext().log("[VolunteerPickupAction] WARNING: Notification dispatch failed: " + e.getMessage(), e);
+                }
+
                 response.setContentType("application/json");
                 response.getWriter().write("{\"success\": true, \"message\": \"Action completed successfully\"}");
             } else {
@@ -87,7 +182,7 @@ public class VolunteerPickupActionServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write("{\"error\": \"Invalid ID format\"}");
         } catch (Exception e) {
-            e.printStackTrace();
+            getServletContext().log("[VolunteerPickupAction] Error processing action: " + e.getMessage(), e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("{\"error\": \"Internal server error\"}");
         }

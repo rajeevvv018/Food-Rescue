@@ -148,6 +148,22 @@ public class PickupService {
         return pickupDAO.updatePickupStatusSafe(pickupId, volunteerId, "PICKED_UP", "DELIVERED");
     }
 
+    // Method: Complete Pickup And Claim (atomic single transaction)
+    public boolean completePickupAndClaim(long pickupId, long volunteerId) throws SQLException {
+        if (pickupId <= 0 || volunteerId <= 0) {
+            return false;
+        }
+        return pickupDAO.completePickupAndClaim(pickupId, volunteerId);
+    }
+
+    // Method: Update Pickup Status Safe (conditional ownership and previous status check)
+    public boolean updatePickupStatusSafe(long pickupId, long volunteerId, String expectedStatus, String newStatus) throws SQLException {
+        if (pickupId <= 0 || volunteerId <= 0 || expectedStatus == null || newStatus == null) {
+            return false;
+        }
+        return pickupDAO.updatePickupStatusSafe(pickupId, volunteerId, expectedStatus.trim(), newStatus.trim());
+    }
+
     // Method 12: Get My Pickups With Details
     public List<com.foodrescue.model.PickupDTO> getMyPickupsWithDetails(long volunteerId) throws SQLException {
         if (volunteerId <= 0) {

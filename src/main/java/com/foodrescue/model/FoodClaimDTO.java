@@ -17,6 +17,9 @@ public class FoodClaimDTO {
     private Timestamp claimedAt;
     private Timestamp updatedAt;
     private Timestamp expiryTime;
+    private Timestamp preparedAt;
+    private String description;
+    private String foodType;
 
     public FoodClaimDTO() {
     }
@@ -165,6 +168,30 @@ public class FoodClaimDTO {
 
     public void setExpiryTime(Timestamp expiryTime) {
         this.expiryTime = expiryTime;
+    }
+
+    public Timestamp getPreparedAt() {
+        return preparedAt;
+    }
+
+    public void setPreparedAt(Timestamp preparedAt) {
+        this.preparedAt = preparedAt;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getFoodType() {
+        return foodType;
+    }
+
+    public void setFoodType(String foodType) {
+        this.foodType = foodType;
     }
 
     @Override

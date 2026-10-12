@@ -120,6 +120,21 @@ public class FoodClaimDAO {
         }
     }
 
+    // UPDATE food claim status safe (conditional on expectedStatus)
+    public boolean updateFoodClaimStatusSafe(long id, String expectedStatus, String newStatus) throws SQLException {
+        String sql = "UPDATE food_claims SET status = ? WHERE id = ? AND status = ?";
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, newStatus);
+            statement.setLong(2, id);
+            statement.setString(3, expectedStatus);
+
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+        }
+    }
+
     // DELETE food claim
     public boolean deleteFoodClaim(long id) throws SQLException {
         String sql = "DELETE FROM food_claims WHERE id = ?";
@@ -158,7 +173,11 @@ public class FoodClaimDAO {
                 "u.name AS provider_name, " +
                 "c.status AS claim_status, " +
                 "c.claimed_at, " +
-                "c.updated_at " +
+                "c.updated_at, " +
+                "f.description, " +
+                "f.food_type, " +
+                "f.prepared_at, " +
+                "f.expiry_time " +
                 "FROM food_claims c " +
                 "JOIN food_listings f ON c.food_id = f.id " +
                 "LEFT JOIN users u ON f.provider_id = u.id " +
@@ -193,6 +212,10 @@ public class FoodClaimDAO {
         dto.setStatus(rs.getString("claim_status"));
         dto.setClaimedAt(rs.getTimestamp("claimed_at"));
         dto.setUpdatedAt(rs.getTimestamp("updated_at"));
+        dto.setDescription(rs.getString("description"));
+        dto.setFoodType(rs.getString("food_type"));
+        dto.setPreparedAt(rs.getTimestamp("prepared_at"));
+        dto.setExpiryTime(rs.getTimestamp("expiry_time"));
         return dto;
     }
 
@@ -211,7 +234,11 @@ public class FoodClaimDAO {
                 "u.email AS ngo_email, " +
                 "c.status AS claim_status, " +
                 "c.claimed_at, " +
-                "c.updated_at " +
+                "c.updated_at, " +
+                "f.description, " +
+                "f.food_type, " +
+                "f.prepared_at, " +
+                "f.expiry_time " +
                 "FROM food_claims c " +
                 "JOIN food_listings f ON c.food_id = f.id " +
                 "JOIN users u ON c.ngo_id = u.id " +
@@ -238,6 +265,10 @@ public class FoodClaimDAO {
                     dto.setStatus(rs.getString("claim_status"));
                     dto.setClaimedAt(rs.getTimestamp("claimed_at"));
                     dto.setUpdatedAt(rs.getTimestamp("updated_at"));
+                    dto.setDescription(rs.getString("description"));
+                    dto.setFoodType(rs.getString("food_type"));
+                    dto.setPreparedAt(rs.getTimestamp("prepared_at"));
+                    dto.setExpiryTime(rs.getTimestamp("expiry_time"));
                     list.add(dto);
                 }
             }

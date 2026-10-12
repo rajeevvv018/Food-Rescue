@@ -6,10 +6,8 @@ import java.sql.SQLException;
 
 public class DBConnection {
 
-    private static final String URL =
-            "jdbc:mysql://localhost:3306/foodrescue";
-
-    private static final String USER = "root";
+    private static final String DEFAULT_URL = "jdbc:mysql://localhost:3306/foodrescue";
+    private static final String DEFAULT_USER = "root";
 
     private DBConnection() {
         // Utility class
@@ -35,9 +33,19 @@ public class DBConnection {
             );
         }
 
+        String url = System.getenv("FOODRESCUE_DB_URL");
+        if (url == null || url.isBlank()) {
+            url = DEFAULT_URL;
+        }
+
+        String user = System.getenv("FOODRESCUE_DB_USER");
+        if (user == null || user.isBlank()) {
+            user = DEFAULT_USER;
+        }
+
         return DriverManager.getConnection(
-                URL,
-                USER,
+                url,
+                user,
                 password
         );
     }

@@ -20,6 +20,8 @@ public class FoodClaimService {
         this.foodListingDAO = new FoodListingDAO();
     }
 
+
+
     // Method 1: Create Food Claim
     public boolean createFoodClaim(FoodClaim foodClaim) throws SQLException {
         if (foodClaim == null) {
@@ -115,6 +117,14 @@ public class FoodClaimService {
             return false;
         }
         return foodClaimDAO.updateFoodClaimStatus(id, status.trim());
+    }
+
+    // Method: Update Claim Status Safe (conditional on expectedStatus)
+    public boolean updateFoodClaimStatusSafe(long id, String expectedStatus, String newStatus) throws SQLException {
+        if (id <= 0 || expectedStatus == null || expectedStatus.trim().isEmpty() || newStatus == null || newStatus.trim().isEmpty()) {
+            return false;
+        }
+        return foodClaimDAO.updateFoodClaimStatusSafe(id, expectedStatus.trim(), newStatus.trim());
     }
 
     // Method 8: Delete Claim
