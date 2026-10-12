@@ -1,5 +1,5 @@
 /**
- * FoodRescue Ã¢â‚¬â€ Frontend Configuration
+ * FoodRescue — Frontend Configuration
  * Contains global settings for the application, including the API backend URL.
  */
 

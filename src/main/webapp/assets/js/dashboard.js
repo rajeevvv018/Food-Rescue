@@ -1,5 +1,5 @@
-﻿/**
- * FoodRescue â€” Dashboard JavaScript
+/**
+ * FoodRescue — Dashboard JavaScript
  * Sidebar navigation, page switching, notification dropdown,
  * mobile sidebar toggle, and shared dashboard interactions.
  * Handles UI logic for Provider, NGO, and Volunteer dashboards.
@@ -147,14 +147,14 @@
         if (data && data.length > 0) {
           data.forEach(function(n) {
             // Determine Icon based on type
-            var icon = 'ðŸ””';
+            var icon = '🔔';
             var iconClass = 'notification-item__icon--info';
             var tstr = (n.title || n.message || '').toUpperCase();
-            if (tstr.includes('APPROVED')) { icon = 'âœ…'; iconClass = 'notification-item__icon--success'; }
-            else if (tstr.includes('PICKUP') || tstr.includes('VOLUNTEER') || tstr.includes('ACCEPTED')) { icon = 'ðŸš´'; iconClass = 'notification-item__icon--info'; }
-            else if (tstr.includes('EXPIRE') || tstr.includes('WARNING') || tstr.includes('REJECTED')) { icon = 'â°'; iconClass = 'notification-item__icon--warning'; }
-            else if (tstr.includes('DELIVERED')) { icon = 'ðŸ“¦'; iconClass = 'notification-item__icon--success'; }
-            else if (tstr.includes('CLAIM')) { icon = 'âœ‹'; iconClass = 'notification-item__icon--info'; }
+            if (tstr.includes('APPROVED')) { icon = '✅'; iconClass = 'notification-item__icon--success'; }
+            else if (tstr.includes('PICKUP') || tstr.includes('VOLUNTEER') || tstr.includes('ACCEPTED')) { icon = '🚴'; iconClass = 'notification-item__icon--info'; }
+            else if (tstr.includes('EXPIRE') || tstr.includes('WARNING') || tstr.includes('REJECTED')) { icon = '⏰'; iconClass = 'notification-item__icon--warning'; }
+            else if (tstr.includes('DELIVERED')) { icon = '📦'; iconClass = 'notification-item__icon--success'; }
+            else if (tstr.includes('CLAIM')) { icon = '✋'; iconClass = 'notification-item__icon--info'; }
 
             var unreadClass = n.isRead ? '' : 'notification-item--unread';
             var dotHtml = n.isRead ? '' : '<div class="notification-item__dot"></div>';
@@ -271,20 +271,20 @@
     }
 
     var icons = {
-      success: 'âœ…',
-      warning: 'âš ï¸',
-      danger: 'âŒ',
-      info: 'â„¹ï¸'
+      success: '✅',
+      warning: '⚠️',
+      danger: '❌',
+      info: 'ℹ️'
     };
 
     var toast = document.createElement('div');
     toast.className = 'toast toast-' + type;
     toast.innerHTML =
-      '<span class="toast-icon">' + (icons[type] || 'âœ…') + '</span>' +
+      '<span class="toast-icon">' + (icons[type] || '✅') + '</span>' +
       '<div class="toast-content">' +
         '<div class="toast-title">' + message + '</div>' +
       '</div>' +
-      '<button class="toast-close" onclick="this.parentElement.remove()">âœ•</button>';
+      '<button class="toast-close" onclick="this.parentElement.remove()">✕</button>';
 
     container.appendChild(toast);
 
@@ -523,7 +523,7 @@
               recentRows += '<tr>';
               recentRows += '  <td>';
               recentRows += '    <div class="data-table__food-info">';
-              recentRows += '      <div style="font-size:1.5rem;margin-right:1rem;">ðŸ±</div>';
+              recentRows += '      <div style="font-size:1.5rem;margin-right:1rem;">🍱</div>';
               recentRows += '      <div>';
               recentRows += '        <div class="data-table__food-name">' + listing.foodName + '</div>';
               recentRows += '        <div class="data-table__food-provider">Added ' + (listing.createdAt || 'recently') + '</div>';
@@ -563,7 +563,7 @@
               allRows += '<tr>';
               allRows += '  <td>';
               allRows += '    <div class="data-table__food-info">';
-              allRows += '      <div style="font-size:1.5rem;margin-right:1rem;">ðŸ±</div>';
+              allRows += '      <div style="font-size:1.5rem;margin-right:1rem;">🍱</div>';
               allRows += '      <div>';
               allRows += '        <div class="data-table__food-name">' + listing.foodName + '</div>';
               allRows += '      </div>';
@@ -734,7 +734,7 @@
               html += '<tr>';
               html += '  <td>';
               html += '    <div class="data-table__food-info">';
-              html += '      <div style="font-size:1.5rem;margin-right:1rem;">ðŸ›</div>';
+              html += '      <div style="font-size:1.5rem;margin-right:1rem;">🍛</div>';
               html += '      <div>';
               html += '        <div class="data-table__food-name">' + listing.foodName + '</div>';
               html += '        <div class="data-table__food-provider">Added ' + (listing.createdAt || 'recently') + '</div>';
@@ -955,10 +955,10 @@
             html += '    <span class="badge badge-success">Open</span>';
             html += '  </div>';
             html += '  <div class="pickup-card__meta">';
-            html += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">ðŸª</span><span>' + item.providerName + '</span></div>';
-            html += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">ðŸ¢</span><span>' + item.ngoName + '</span></div>';
-            html += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">ðŸ“</span><span>' + item.pickupAddress + '</span></div>';
-            html += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">â°</span><span>Expires: ' + item.expiryTime + '</span></div>';
+            html += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">🏪</span><span>' + item.providerName + '</span></div>';
+            html += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">🏢</span><span>' + item.ngoName + '</span></div>';
+            html += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">📍</span><span>' + item.pickupAddress + '</span></div>';
+            html += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">⏰</span><span>Expires: ' + item.expiryTime + '</span></div>';
             html += '  </div>';
             html += '  <div class="pickup-card__actions">';
             html += '    <button class="btn btn-primary btn-sm" onclick="handlePickupAction(' + item.claimId + ', \'ACCEPT\', this)">Accept Pickup</button>';
@@ -1043,18 +1043,18 @@
               activeHtml += '  </div>';
 
               activeHtml += '  <div class="status-flow">';
-              activeHtml += '    <div class="status-flow__step status-flow__step--completed">âœ“ Accepted</div>';
-              activeHtml += '    <div class="status-flow__arrow">â†’</div>';
-              activeHtml += '    <div class="status-flow__step ' + (isPickedUp ? 'status-flow__step--completed">âœ“' : 'status-flow__step--active">') + ' Picked Up</div>';
-              activeHtml += '    <div class="status-flow__arrow">â†’</div>';
+              activeHtml += '    <div class="status-flow__step status-flow__step--completed">✓ Accepted</div>';
+              activeHtml += '    <div class="status-flow__arrow">→</div>';
+              activeHtml += '    <div class="status-flow__step ' + (isPickedUp ? 'status-flow__step--completed">✓' : 'status-flow__step--active">') + ' Picked Up</div>';
+              activeHtml += '    <div class="status-flow__arrow">→</div>';
               activeHtml += '    <div class="status-flow__step">Delivered</div>';
               activeHtml += '  </div>';
 
               activeHtml += '  <div class="pickup-card__meta">';
-              activeHtml += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">ðŸª</span><span>' + pickup.providerName + '</span></div>';
-              activeHtml += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">ðŸ¢</span><span>' + pickup.ngoName + '</span></div>';
-              activeHtml += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">ðŸ“</span><span>' + pickup.providerAddress + ' &rarr; ' + pickup.ngoAddress + '</span></div>';
-              activeHtml += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">â°</span><span>Expires: ' + pickup.expiryTime + '</span></div>';
+              activeHtml += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">🏪</span><span>' + pickup.providerName + '</span></div>';
+              activeHtml += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">🏢</span><span>' + pickup.ngoName + '</span></div>';
+              activeHtml += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">📍</span><span>' + pickup.providerAddress + ' &rarr; ' + pickup.ngoAddress + '</span></div>';
+              activeHtml += '    <div class="pickup-card__meta-item"><span class="pickup-card__meta-icon">⏰</span><span>Expires: ' + pickup.expiryTime + '</span></div>';
               activeHtml += '  </div>';
 
               activeHtml += '  <div class="pickup-card__actions">';
