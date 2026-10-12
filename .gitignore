@@ -32,3 +32,6 @@ desktop.ini
 # Local configuration
 application-local.properties
 application-local.yml
+
+# Database backups
+*.sql
