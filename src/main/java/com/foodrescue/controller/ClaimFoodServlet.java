@@ -4,6 +4,10 @@ import com.foodrescue.model.FoodClaim;
 import com.foodrescue.model.FoodListing;
 import com.foodrescue.service.FoodClaimService;
 import com.foodrescue.service.FoodListingService;
+import com.foodrescue.model.Notification;
+import com.foodrescue.model.User;
+import com.foodrescue.service.NotificationService;
+import com.foodrescue.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -19,10 +23,14 @@ public class ClaimFoodServlet extends HttpServlet {
 
     private final FoodClaimService foodClaimService;
     private final FoodListingService foodListingService;
+    private final NotificationService notificationService;
+    private final UserService userService;
 
     public ClaimFoodServlet() {
         this.foodClaimService = new FoodClaimService();
         this.foodListingService = new FoodListingService();
+        this.notificationService = new NotificationService();
+        this.userService = new UserService();
     }
 
     @Override
@@ -100,6 +108,20 @@ public class ClaimFoodServlet extends HttpServlet {
             getServletContext().log("[ClaimFood] createFoodClaim result=" + success + " for ngoId=" + ngoId + " foodId=" + foodId + " qty=" + claimedQuantity);
 
             if (success) {
+                try {
+                    User ngo = userService.getUserById(ngoId);
+                    String ngoName = (ngo != null && ngo.getName() != null) ? ngo.getName() : "An NGO";
+
+                    Notification notification = new Notification();
+                    notification.setUserId(listing.getProviderId());
+                    notification.setTitle("New Food Claim");
+                    notification.setMessage("NGO " + ngoName + " has requested/claimed your food: " + listing.getFoodName());
+                    notification.setRead(false);
+                    notificationService.createNotification(notification);
+                } catch (Exception e) {
+                    getServletContext().log("[ClaimFood] WARNING: Failed to create notification: " + e.getMessage());
+                }
+
                 response.sendRedirect(request.getContextPath() + "/ngo/dashboard.html?claimSuccess=true");
             } else {
                 getServletContext().log("[ClaimFood] FAILED: Service returned false");

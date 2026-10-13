@@ -214,6 +214,76 @@ public class PickupDAO {
         }
     }
 
+    // Volunteer Action: Mark delivered and complete claim in a single atomic JDBC transaction
+    public boolean completePickupAndClaim(long pickupId, long volunteerId) throws SQLException {
+        String selectPickupSql = "SELECT claim_id FROM pickups WHERE id = ? AND volunteer_id = ? AND status = 'PICKED_UP' FOR UPDATE";
+        String updateClaimSql = "UPDATE food_claims SET status = 'COMPLETED' WHERE id = ? AND status = 'READY_FOR_PICKUP'";
+        String updatePickupSql = "UPDATE pickups SET status = 'DELIVERED' WHERE id = ? AND volunteer_id = ? AND status = 'PICKED_UP'";
+
+        try (Connection connection = DBConnection.getConnection()) {
+            connection.setAutoCommit(false);
+            try {
+                long claimId = -1;
+
+                // 1. Lock pickup, verify ownership and required previous status (PICKED_UP)
+                try (PreparedStatement stmt = connection.prepareStatement(selectPickupSql)) {
+                    stmt.setLong(1, pickupId);
+                    stmt.setLong(2, volunteerId);
+                    try (ResultSet rs = stmt.executeQuery()) {
+                        if (rs.next()) {
+                            claimId = rs.getLong("claim_id");
+                        } else {
+                            connection.rollback();
+                            return false; // Not found, wrong volunteer, or not in PICKED_UP status
+                        }
+                    }
+                }
+
+                if (claimId <= 0) {
+                    connection.rollback();
+                    return false;
+                }
+
+                // 2. Transition claim from expected status READY_FOR_PICKUP to COMPLETED
+                try (PreparedStatement stmt = connection.prepareStatement(updateClaimSql)) {
+                    stmt.setLong(1, claimId);
+                    int claimRows = stmt.executeUpdate();
+                    if (claimRows <= 0) {
+                        connection.rollback();
+                        return false; // Claim was not in valid READY_FOR_PICKUP state
+                    }
+                }
+
+                // 3. Transition pickup from PICKED_UP to DELIVERED with volunteer ownership check
+                try (PreparedStatement stmt = connection.prepareStatement(updatePickupSql)) {
+                    stmt.setLong(1, pickupId);
+                    stmt.setLong(2, volunteerId);
+                    int pickupRows = stmt.executeUpdate();
+                    if (pickupRows <= 0) {
+                        connection.rollback();
+                        return false;
+                    }
+                }
+
+                connection.commit();
+                return true;
+            } catch (SQLException e) {
+                try {
+                    connection.rollback();
+                } catch (SQLException rollbackEx) {
+                    e.addSuppressed(rollbackEx);
+                }
+                throw e;
+            } finally {
+                try {
+                    connection.setAutoCommit(true);
+                } catch (SQLException autoCommitEx) {
+                    // Suppress to prevent masking the primary exception or failing cleanup
+                }
+            }
+        }
+    }
+
     // Volunteer Dashboard: Get my pickups with details
     public List<com.foodrescue.model.PickupDTO> getMyPickupsWithDetails(long volunteerId) throws SQLException {
         List<com.foodrescue.model.PickupDTO> list = new ArrayList<>();

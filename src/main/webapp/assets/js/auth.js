@@ -68,7 +68,7 @@
 
       try {
         const formData = new URLSearchParams(new FormData(loginForm));
-        const response = await fetch(loginForm.action, {
+        const response = await apiFetch(loginForm.action, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -78,7 +78,13 @@
 
         if (response.ok) {
           if (response.redirected) {
-            window.location.href = response.url;
+            try {
+              const redirectPath = new URL(response.url).pathname;
+              const cleanPath = redirectPath.startsWith('/') ? redirectPath.substring(1) : redirectPath;
+              window.location.href = cleanPath;
+            } catch (err) {
+              window.location.href = response.url;
+            }
           } else {
             // Some fallback if redirect didn't happen properly
             window.location.href = 'index.html';
@@ -127,7 +133,7 @@
 
       try {
         const formData = new URLSearchParams(new FormData(registerForm));
-        const response = await fetch(registerForm.action, {
+        const response = await apiFetch(registerForm.action, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'

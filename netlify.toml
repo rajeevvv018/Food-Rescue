@@ -1,0 +1,6 @@
+[build]
+  publish = "src/main/webapp"
+  command = "" # No build command needed for plain HTML/CSS/JS frontend
+
+# If you have clean URLs (without .html), Netlify usually handles it, but you can explicitly define them if needed.
+# We do not proxy API calls here, because the frontend JavaScript handles the backend URL via config.js.

@@ -63,6 +63,15 @@ public class NGOClaimsServlet extends HttpServlet {
                 json.append("\"pickupAddress\":\"").append(escapeJson(claim.getPickupAddress())).append("\",");
                 json.append("\"status\":\"").append(escapeJson(claim.getStatus())).append("\",");
 
+                json.append("\"description\":\"").append(escapeJson(claim.getDescription())).append("\",");
+                json.append("\"foodType\":\"").append(escapeJson(claim.getFoodType())).append("\",");
+
+                String preparedAtStr = claim.getPreparedAt() != null ? dateFormat.format(claim.getPreparedAt()) : "";
+                json.append("\"preparedAt\":\"").append(escapeJson(preparedAtStr)).append("\",");
+
+                String expiryTimeStr = claim.getExpiryTime() != null ? dateFormat.format(claim.getExpiryTime()) : "";
+                json.append("\"expiryTime\":\"").append(escapeJson(expiryTimeStr)).append("\",");
+
                 String claimedAtStr = claim.getClaimedAt() != null ? dateFormat.format(claim.getClaimedAt()) : "";
                 json.append("\"claimedAt\":\"").append(escapeJson(claimedAtStr)).append("\",");
 
